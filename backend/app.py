@@ -11,5 +11,5 @@ if not model:
     trainer.test()
     trainer.save_model()
 
-pred_class = trainer.predict('backend/dataset/unzipped/Healthy/healthy (5).jpeg')
+pred_class = trainer.predict('backend/dataset/unzipped/Yellow/yellow (45).jpeg')
 print(pred_class)

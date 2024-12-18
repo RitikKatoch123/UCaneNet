@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import json
 from tensorflow.keras.preprocessing import image
+import tensorflow as tf
 
 class CaneNet:
     def __init__(self):
@@ -134,7 +135,7 @@ class CaneNet:
     def load_model(self, model_name="model.h5"):
         try:
             self.model = load_model(f"backend/models/{model_name}")
-            print(self.model.summary())
+            # print(self.model.summary())
 
             with open(f"backend/models/{model_name}.classes.json", "r") as f:
                 model_metadata = json.load(f)
@@ -150,9 +151,10 @@ class CaneNet:
             img = image.load_img(img_path, target_size=self.IMAGE_SIZE)
             img_array = image.img_to_array(img)
             img_array = np.expand_dims(img_array, axis=0)
-            img_array = img_array / 255.0
-            prediction = self.model.predict(img_array)
-            predicted_class = self.class_names[np.argmax(prediction)]
+            prediction = self.model.predict(img_array, verbose=0)
+            score = tf.nn.softmax(prediction[0])
+            predicted_class = tf.argmax(score).numpy()
+            predicted_class = self.class_names[predicted_class]
             return predicted_class
         else:
             print("Model not loaded")
