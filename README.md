@@ -1,0 +1,1 @@
+dataset : https://www.kaggle.com/datasets/nirmalsankalana/sugarcane-leaf-disease-dataset
