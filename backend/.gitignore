@@ -1,0 +1,3 @@
+dataset/unzipped
+dataset/*.zip
+learner/__pycache__
