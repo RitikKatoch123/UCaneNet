@@ -1,15 +1,4 @@
-from learner.CaneNet import CaneNet
-trainer = CaneNet()
-model = trainer.load_model()
+from server.server import app
 
-if not model:
-    trainer._load_dataset()
-    print(trainer.get_class_names())
-    trainer.prepare_model()
-    trainer.train()
-    trainer.get_classification_report()
-    trainer.test()
-    trainer.save_model()
-
-pred_class = trainer.predict('backend/dataset/unzipped/Yellow/yellow (45).jpeg')
-print(pred_class)
+if __name__ == '__main__':
+    app.run(debug=True)

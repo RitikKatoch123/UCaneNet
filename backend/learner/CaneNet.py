@@ -11,6 +11,8 @@ import numpy as np
 import json
 from tensorflow.keras.preprocessing import image
 import tensorflow as tf
+import io
+import base64
 
 class CaneNet:
     def __init__(self):
@@ -116,11 +118,14 @@ class CaneNet:
         plt.ylim([0, 1])
         plt.ylabel('Accuracy')
         plt.xlabel('Epoch')
-        plt.show()
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+        return base64.b64encode(buf.read()).decode('utf-8')
 
     def test(self):
         result = self.model.evaluate(self.test_ds, return_dict=True)
-        print(result)
+        return result
 
     def save_model(self, model_name="model.h5"):
         if self.model:

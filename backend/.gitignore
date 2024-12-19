@@ -1,3 +1,7 @@
 dataset/unzipped
 dataset/*.zip
 learner/__pycache__
+server/__pycache__
+uploads/*.png
+uploads/*.jpg
+uploads/*.jpeg
