@@ -1,3 +1,4 @@
 .vscode
 backend/server/bhoomi*.json
 frontend/.env
+backend/models/model.h5

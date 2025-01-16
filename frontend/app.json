@@ -2,9 +2,9 @@
   "expo": {
     "name": "bhoomi",
     "slug": "bhoomi",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icons/",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
@@ -14,8 +14,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.bhoomi",
-      "googleServicesFile": "./google-services.json"
+      "package": "com.bhoomi"
     },
     "web": {
       "favicon": "./assets/favicon.png"
