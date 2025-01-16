@@ -3,19 +3,26 @@ from tensorflow.keras.preprocessing import image_dataset_from_directory
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.data import AUTOTUNE
 from tensorflow.keras import Sequential
-from tensorflow.keras.layers import Rescaling, GlobalAveragePooling2D, Flatten, Dense, Dropout, ReLU
+from tensorflow.keras.layers import Rescaling, GlobalAveragePooling2D, Flatten, Dense, Dropout, ReLU, MaxPooling2D, Rescaling, Conv2D
 from tensorflow.keras.losses import SparseCategoricalCrossentropy
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.preprocessing import image
+from tensorflow.nn import softmax
+from tensorflow import argmax as tf_argmax
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras import backend as K
 import matplotlib.pyplot as plt
+import cv2
 import numpy as np
 import json
-from tensorflow.keras.preprocessing import image
 import tensorflow as tf
 import io
 import base64
+import matplotlib
+matplotlib.use('Agg')
 
 class CaneNet:
-    def __init__(self):
+    def __init__(self, model_type=0):
         self.DATASET_PATH = "backend/dataset/unzipped"
         self.IMAGE_SIZE = (128, 128)
         self.INPUT_SHAPE = (128, 128, 3)
@@ -31,6 +38,7 @@ class CaneNet:
         self.test_ds = None
         self.train_ds = None
         self.validation_ds = None
+        self.model_type = model_type
 
     def _load_dataset(self):
         train_ds = image_dataset_from_directory(
@@ -65,25 +73,51 @@ class CaneNet:
         return self.class_names
 
     def prepare_model(self):
-        base_model = MobileNetV2(
-            input_shape=self.INPUT_SHAPE,
-            include_top=False,
-            weights='imagenet'
-        )
-        base_model.trainable = True
+        if self.model_type == 0:
+            base_model = MobileNetV2(
+                input_shape=self.INPUT_SHAPE,
+                include_top=False,
+                weights='imagenet'
+            )
+            base_model.trainable = True
 
-        for layer in base_model.layers[:self.FINE_TUNE_POINT]:
-            layer.trainable = False
+            for layer in base_model.layers[:self.FINE_TUNE_POINT]:
+                layer.trainable = False
 
-        model = Sequential([
-            Rescaling(1./255, input_shape=self.INPUT_SHAPE),
-            base_model,
-            GlobalAveragePooling2D(),
-            Flatten(),
-            Dense(64, activation=ReLU()),
-            Dropout(0.25),
-            Dense(len(self.class_names), activation='softmax')
-        ])
+            model = Sequential([
+                Rescaling(1./255, input_shape=self.INPUT_SHAPE),
+                base_model,
+                Conv2D(256, (3, 3), activation='relu', padding='same'),
+                GlobalAveragePooling2D(),
+                Flatten(),
+                Dense(64, activation=ReLU()),
+                Dropout(0.25),
+                Dense(len(self.class_names), activation='softmax')
+            ])
+        if self.model_type == 1:        
+            model = Sequential([
+                Rescaling(1./255, input_shape=self.INPUT_SHAPE),
+                
+                Conv2D(32, (3, 3), activation='relu', padding='same'),
+                MaxPooling2D((2, 2)),
+                
+                Conv2D(64, (3, 3), activation='relu', padding='same'),
+                MaxPooling2D((2, 2)),
+                
+                Conv2D(128, (3, 3), activation='relu', padding='same'),
+                MaxPooling2D((2, 2)),
+                
+                Conv2D(256, (3, 3), activation='relu', padding='same'),
+                GlobalAveragePooling2D(),
+                
+                Flatten(),
+                Dense(128, activation='relu'),
+                Dropout(0.3),
+                Dense(64, activation='relu'),
+                Dropout(0.3),
+                Dense(len(self.class_names), activation='softmax')
+            ])
+            
         model.compile(
             optimizer=Adam(learning_rate=self.LEARNING_RATE),
             loss=SparseCategoricalCrossentropy(from_logits=False),
@@ -118,6 +152,7 @@ class CaneNet:
         plt.ylim([0, 1])
         plt.ylabel('Accuracy')
         plt.xlabel('Epoch')
+        plt.show()
         buf = io.BytesIO()
         plt.savefig(buf, format='png')
         buf.seek(0)
@@ -157,10 +192,62 @@ class CaneNet:
             img_array = image.img_to_array(img)
             img_array = np.expand_dims(img_array, axis=0)
             prediction = self.model.predict(img_array, verbose=0)
-            score = tf.nn.softmax(prediction[0])
-            predicted_class = tf.argmax(score).numpy()
+            score = softmax(prediction[0])
+            predicted_class = tf_argmax(score).numpy()
+            confidence = score[predicted_class].numpy()
             predicted_class = self.class_names[predicted_class]
-            return predicted_class
+            return predicted_class, confidence
         else:
             print("Model not loaded")
             return None
+    
+    def generate_grad_cam(self, img_path):
+        if self.model:
+            img = image.load_img(img_path, target_size=self.IMAGE_SIZE)
+            img_array = image.img_to_array(img)
+            img_array = np.expand_dims(img_array, axis=0)
+            # if self.model_type == 0:
+            #     last_layer_name = "mobilenetv2_1.00_128"
+            #     last_conv_layer = self.model.get_layer(last_layer_name).get_layer("Conv1")
+            #     layer_input = self.model.get_layer(last_layer_name).input
+            # if self.model_type == 1:
+            last_layer_name = "conv2d"
+            last_conv_layer = self.model.get_layer(last_layer_name)
+            layer_input = self.model.input
+            grad_model = tf.keras.models.Model(
+                inputs=layer_input,
+                outputs=[last_conv_layer.output, self.model.output]
+            )
+
+            with tf.GradientTape() as tape:
+                inputs = tf.cast(img_array, tf.float32)
+                conv_outputs, predictions = grad_model(inputs)
+                predicted_class = tf.argmax(predictions[0])
+                loss = predictions[:, predicted_class]
+
+            grads = tape.gradient(loss, conv_outputs)
+            pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
+            conv_outputs = conv_outputs[0].numpy()
+
+            for i in range(conv_outputs.shape[-1]):
+                conv_outputs[:, :, i] *= pooled_grads[i]
+
+            heatmap = np.mean(conv_outputs, axis=-1)
+            heatmap = np.maximum(heatmap, 0) / np.max(heatmap)
+
+            heatmap = cv2.resize(heatmap, (self.IMAGE_SIZE[1], self.IMAGE_SIZE[0]))
+            heatmap = np.uint8(255 * heatmap)
+            heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
+
+            img = cv2.imread(img_path)
+            img = cv2.resize(img, (self.IMAGE_SIZE[1], self.IMAGE_SIZE[0]))
+            superimposed_img = cv2.addWeighted(img, 0.6, heatmap, 0.4, 0)
+
+            plt.imshow(cv2.cvtColor(superimposed_img, cv2.COLOR_BGR2RGB))
+            plt.axis('off')
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png')
+            buf.seek(0)
+            return base64.b64encode(buf.read()).decode('utf-8')
+        else:
+            print("Model not loaded")
