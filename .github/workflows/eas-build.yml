@@ -30,9 +30,11 @@ jobs:
 
       - name: 📦 Install dependencies
         run: npm install
+        working-directory: frontend
 
       - name: 🚀 Build app
         run: eas build --profile preview --platform android --non-interactive
+        working-directory: frontend
 
       - name: 🏗 Fetch latest build URL
         run: |
@@ -40,3 +42,4 @@ jobs:
           BUILD_URL=$(echo $BUILD_INFO | jq -r '.[0].artifacts.buildUrl')
           echo "Build URL: $BUILD_URL"
           echo "BUILD_URL=$BUILD_URL" >> $GITHUB_ENV
+        working-directory: frontend

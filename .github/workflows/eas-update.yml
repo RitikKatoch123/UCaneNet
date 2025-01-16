@@ -26,6 +26,8 @@ jobs:
 
       - name: 📦 Install dependencies
         run: npm install
+        working-directory: frontend
 
       - name: 🚀 Create update
         run: eas update --channel preview --auto --non-interactive
+        working-directory: frontend
