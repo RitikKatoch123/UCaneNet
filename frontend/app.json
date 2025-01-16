@@ -7,8 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "splash": {
-    },
+    "splash": {},
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
@@ -21,7 +20,7 @@
     },
     "runtimeVersion": "1.0.2",
     "updates": {
-      "url": "",
+      "url": "https://u.expo.dev/c5c69d3e-888c-4deb-b79b-7c9a8d53334b",
       "enabled": true,
       "fallbackToCacheTimeout": 0,
       "checkAutomatically": "ON_LOAD"
@@ -34,6 +33,7 @@
         "projectId": "c5c69d3e-888c-4deb-b79b-7c9a8d53334b"
       }
     },
-    "owner": "bhoomi-ml"
+    "owner": "bhoomi-ml",
+    "ios": {}
   }
 }
