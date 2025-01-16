@@ -2,7 +2,7 @@
   "expo": {
     "name": "bhoomi",
     "slug": "bhoomi",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -18,7 +18,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "runtimeVersion": "1.0.2",
+    "runtimeVersion": "1.0.3",
     "updates": {
       "url": "https://u.expo.dev/c5c69d3e-888c-4deb-b79b-7c9a8d53334b",
       "enabled": true,
