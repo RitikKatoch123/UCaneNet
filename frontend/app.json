@@ -22,7 +22,9 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "runtimeVersion": "1.0.3",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "updates": {
       "url": "https://u.expo.dev/c5c69d3e-888c-4deb-b79b-7c9a8d53334b",
       "enabled": true,
@@ -32,12 +34,6 @@
     "plugins": [
       "expo-asset"
     ],
-    "extra": {
-      "eas": {
-        "projectId": "c5c69d3e-888c-4deb-b79b-7c9a8d53334b"
-      }
-    },
-    "owner": "bhoomi-ml",
     "ios": {}
   }
 }

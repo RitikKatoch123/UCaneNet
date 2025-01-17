@@ -45,32 +45,29 @@ const LoginScreen = ({ navigation }) => {
   const handleLogin = () => {
     if (email && password) {
       if (validateEmail(email)) {
-        axios
-          .put(urls.passwordSigninUrl, {
-            email: email,
-            password: password,
-          })
-          .then((response) => {
-            ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-            if (response.data.status === 'success') {
-              authContext.setAuthToken(response.data.authToken);
-              navigation.replace(constants.screenRoutes.BOTTOM_TABS_ROUTER);
-            }
-          })
-          .catch((error) => {
-            const errorMessage =
-              error.response && error.response.data && error.response.data.message
-                ? error.response.data.message
-                : 'Something went wrong. Please try again.';
-            ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
-          });
+        axios.put(urls.passwordSigninUrl, {
+          email: email,
+          password: password
+        })
+        .then(response=>{
+          if(response.status!==200){
+            ToastAndroid.show(response.data.message, ToastAndroid.SHORT)
+            return;
+          }          
+          authContext.setAuthToken(response.data.authToken);
+          ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+          navigation.replace(constants.screenRoutes.BOTTOM_TABS_ROUTER);
+        })
+        .catch(error=>{
+          ToastAndroid.show(error.message, ToastAndroid.SHORT);
+        })
       } else {
-        ToastAndroid.show('Invalid email address', ToastAndroid.SHORT);
+        ToastAndroid.show('Invalid email address', ToastAndroid.SHORT)
       }
     } else {
-      ToastAndroid.show('Please fill all fields', ToastAndroid.SHORT);
+      ToastAndroid.show('Please fill all fields', ToastAndroid.SHORT)
     }
-  };
+  }
   const handleSignUp = () => {
     navigation.navigate(constants.screenRoutes.SIGN_UP_SCREEN)
   }

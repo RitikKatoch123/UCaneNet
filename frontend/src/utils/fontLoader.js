@@ -1,6 +1,6 @@
 import * as Font from 'expo-font';
 import AlatsiRegular from '../../assets/fonts/AlatsiRegular.ttf';
-import AmiriQuranRegular from "../../assets/fonts/AmiriQuranRegular.ttf";
+import AmiriQuranRegular from "../../assets/fonts/AmiriQuranColoredRegular.ttf";
 import AoboshiOneRegular from "../../assets/fonts/AoboshiOneRegular.ttf";
 import AverageSansRegular from "../../assets/fonts/AverageSansRegular.ttf";
 import Inter18ptBlackItalic from "../../assets/fonts/Inter18ptBlackItalic.ttf";
