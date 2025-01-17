@@ -10,7 +10,7 @@ const autoUpdateFetch = async () => {
         }
     } catch (error) {
         ToastAndroid.show(
-            `Error fetching latest Expo update: ${error}`,
+            error.message,
             ToastAndroid.SHORT,
         );
     }
