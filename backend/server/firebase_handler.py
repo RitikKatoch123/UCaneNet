@@ -54,7 +54,7 @@ class FirebaseService:
             user_data = users_ref[0].to_dict()
             stored_password = user_data.get('password')
             if stored_password and stored_password == password:
-                return True, user_data.get('user_id')
+                return True, users_ref[0].id
         except Exception as e:
             print(f"Error authenticating user: {e}")
         return False, ''

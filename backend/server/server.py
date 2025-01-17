@@ -32,7 +32,8 @@ def upload_file(user_id):
         filename = secure_filename(file.filename)
         file.save(os.path.join("backend/", app.config['UPLOAD_FOLDER'], filename))
         tracking_id = str(uuid.uuid4())
-        threading.Thread(target=run_predict, args=(tracking_id, filename, firebaseService, user_id)).start()
+        langid = request.args.get('langid', default=None, type=int)
+        threading.Thread(target=run_predict, args=(tracking_id, filename, firebaseService, user_id, langid)).start()
         return jsonify({'message': 'File uploaded successfully', 'filename': filename, 'tracking_id': tracking_id}), 201
     else:
         return jsonify({'error': 'Invalid file format'}), 400

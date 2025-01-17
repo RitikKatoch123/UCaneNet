@@ -41,11 +41,11 @@ def save_report(data, firebaseService, name, image, user_id):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def more_details(disease_name):
+def more_details(disease_name, langid):
     prompt = f'''
     Provide detailed information 
     (only raw json data, dont put it in code blocks. 
-    don't put many points in single keyword. only single stentence)
+    don't put many points in single keyword. only single stentence. PLEASE NOTE: The language for each VALUE must be {["hindi", "english"][int(langid)]}. And Key should be strictly english (as they are given above))
     about the disease called "{disease_name}". 
     Specifically, describe the following points using keywords given for each:
     1) Causes of the disease (causes),
@@ -76,7 +76,7 @@ def more_details(disease_name):
     response = response["candidates"][0]["content"]["parts"][0]["text"]
     return response
 
-def run_predict(tracking_id, filename, firebaseService, user_id):
+def run_predict(tracking_id, filename, firebaseService, user_id, langid):
     global model
     if model:
         incomplete_predictions.add(tracking_id)
@@ -85,7 +85,7 @@ def run_predict(tracking_id, filename, firebaseService, user_id):
         b64_img = base64.b64encode(compressed_image).decode('utf-8')
         result, confidence = trainer.predict(img_path)
         grad_cam = trainer.generate_grad_cam(img_path)
-        extra_details = more_details(result)
+        extra_details = more_details(result, langid)
         if user_id != 'null': save_report(json.loads(extra_details), firebaseService, result, b64_img, user_id)
         prediction_data[tracking_id] = {
             "result": result,
@@ -97,7 +97,7 @@ def run_predict(tracking_id, filename, firebaseService, user_id):
     else:
         run_train()
         model = trainer.load_model()
-        run_predict(tracking_id, filename, firebaseService, user_id)
+        run_predict(tracking_id, filename, firebaseService, user_id, langid)
 
 def run_train():
     global trainer
