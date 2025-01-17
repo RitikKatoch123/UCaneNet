@@ -6,7 +6,7 @@ import placeHolderImage from "../../../../assets/profile-picture-avatar.png"
 const ProfileButton = ({ authContext, colors, constants }) => {
     const navigation = useNavigation();
     const goToProfile = () => {
-        navigation.navigate(constants.drawerRoutes.PROFILE_SCREEN)
+        navigation.navigate(constants.bottomTabsRoutes.PROFILE_TAB)
     }
     const styles = StyleSheet.create({
         shadow: {

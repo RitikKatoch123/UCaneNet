@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, ToastAndroid, View } from 'react-native'
+import { Image, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import tractorLogo from '../../../../assets/icons/tractor-icon.png';
 
@@ -11,6 +11,8 @@ const AppLogo = ({ constants, colors }) => {
     logo: {
       width: 25,
       height: 20,
+      resizeMode: 'contain',
+      marginTop: 5
     },
     headingT2: {
       textAlign: 'center',

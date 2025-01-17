@@ -25,7 +25,7 @@ const SignUpScreen = ({ navigation }) => {
   const urls = new Urls(authContext);
 
   const handleFacebookLogin = () => {
-    ToastAndroid.show('Facebook login is not supported yet.', ToastAndroid.SHORT)
+    ToastAndroid.show(strings.facebookLoginNotSupported, ToastAndroid.SHORT)
   }
 
   const handleGoogleLogin = async () => {
@@ -43,16 +43,16 @@ const SignUpScreen = ({ navigation }) => {
         selectedThemeId: appContext.themeId,
       });
       authContext.setAuthToken(response.data.user_id);
-      navigation.replace(constants.screenRoutes.LANGUAGE_SCREEN);
-      ToastAndroid.show('Google Sign-Up Successful', ToastAndroid.SHORT);
+      !authContext.loading && navigation.replace(constants.screenRoutes.LANGUAGE_SCREEN);
+      ToastAndroid.show(strings.googleSignupSucessful, ToastAndroid.SHORT);
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        ToastAndroid.show('Sign-In Cancelled', ToastAndroid.SHORT);
+        ToastAndroid.show(strings.signInCancelledError, ToastAndroid.SHORT);
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        ToastAndroid.show('Play Services Not Available', ToastAndroid.SHORT);
+        ToastAndroid.show(strings.playServiceError, ToastAndroid.SHORT);
       } else {
         console.error(error);
-        ToastAndroid.show('Google Sign-In Failed', ToastAndroid.SHORT);
+        ToastAndroid.show(strings.signInFailedError, ToastAndroid.SHORT);
       }
     }
   };
@@ -71,17 +71,17 @@ const SignUpScreen = ({ navigation }) => {
           .then((response) => {
             authContext.setAuthToken(response.data.user_id);
             navigation.navigate(constants.screenRoutes.LANGUAGE_SCREEN);
-            ToastAndroid.show('Sign-Up Successful', ToastAndroid.SHORT);
+            ToastAndroid.show(strings.signupSucessful, ToastAndroid.SHORT);
           })
           .catch((error) => {
             console.error(error);
-            ToastAndroid.show('Sign-Up Failed', ToastAndroid.SHORT);
+            ToastAndroid.show(strings.signUpFailed, ToastAndroid.SHORT);
           });
       } else {
-        ToastAndroid.show('Invalid email address', ToastAndroid.SHORT);
+        ToastAndroid.show(strings.invalidEmailAddress, ToastAndroid.SHORT);
       }
     } else {
-      ToastAndroid.show('Please fill all fields', ToastAndroid.SHORT);
+      ToastAndroid.show(strings.pleaseFillAllFields, ToastAndroid.SHORT);
     }
   };
 
@@ -242,10 +242,11 @@ const SignUpScreen = ({ navigation }) => {
     },
     line: {
       flex: 1,
-      maxWidth: 80,
+      maxWidth: 84,
       height: 1,
       backgroundColor: colors.lineBackgroundColor,
       marginHorizontal: 10,
+      marginBottom: -5,
     },
     signInWithLabel: {
       marginVertical: 10,

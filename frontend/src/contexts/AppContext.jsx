@@ -1,58 +1,73 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, { createContext, useState, useEffect, useContext, useCallback } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { AuthContext } from './AuthContext';
 import { ToastAndroid } from "react-native";
+import { AuthContext } from "./AuthContext";
 import Urls from "../constants/Urls";
+
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const [theme, setTheme] = useState(0);
-  const [language, setLanguage] = useState(0);
+  const [theme, setThemeState] = useState(0);
+  const [language, setLanguageState] = useState(0);
   const authContext = useContext(AuthContext);
   const urls = new Urls(authContext);
 
   useEffect(() => {
-    const saveTheme = async () => {
+    const loadSettings = async () => {
       try {
-        await AsyncStorage.setItem("theme", theme.toString());
-        if (authContext.authToken) {
-          axios.put(urls.updateThemeUrl, { selectedThemeId: theme })
-            .then((response) => ToastAndroid.show(response.data.status, ToastAndroid.SHORT))
-            .catch((error) => ToastAndroid.show(error.message, ToastAndroid.SHORT));
-        }
+        const savedTheme = await AsyncStorage.getItem("theme");
+        const savedLanguage = await AsyncStorage.getItem("language");
+        if (savedTheme !== null) setThemeState(parseInt(savedTheme));
+        if (savedLanguage !== null) setLanguageState(parseInt(savedLanguage));
       } catch (error) {
-        console.log("Error saving theme:", error);
+        console.log("Error loading settings:", error);
       }
     };
-    saveTheme();
-  }, [theme]);
+    loadSettings();
+  }, []);
 
-  useEffect(() => {
-    const saveLanguage = async () => {
-      try {
-        await AsyncStorage.setItem("language", language.toString());        
-        if (authContext.authToken) {
-          axios.put(urls.updateLanguageUrl, { selectedLanguageId: language })
-            .then((response) => ToastAndroid.show(response.data.status, ToastAndroid.SHORT))
-            .catch((error) => ToastAndroid.show(error.message, ToastAndroid.SHORT));
-        }
-      } catch (error) {
-        console.log("Error saving language:", error);
+  const setTheme = useCallback(async (newTheme) => {
+    setThemeState(newTheme);
+    try {
+      await AsyncStorage.setItem("theme", newTheme.toString());
+      if (authContext.authToken) {
+        axios
+          .put(urls.updateThemeUrl, { selectedThemeId: newTheme })
+          .then(
+            // (response) => ToastAndroid.show(response.data.status, ToastAndroid.SHORT)
+          )
+          .catch((error) =>
+            ToastAndroid.show(error.message, ToastAndroid.SHORT)
+          );
       }
-    };
-    saveLanguage();
-  }, [language]);
+    } catch (error) {
+      console.log("Error saving theme:", error);
+    }
+  }, [authContext.authToken, urls]);
 
-  const objectsToExport = {
-    theme,
-    setTheme,
-    language,
-    setLanguage,
-  };
+  const setLanguage = useCallback(async (newLanguage) => {
+    setLanguageState(newLanguage);
+    try {
+      await AsyncStorage.setItem("language", newLanguage.toString());
+      if (authContext.authToken) {
+        axios
+          .put(urls.updateLanguageUrl, { selectedLanguageId: newLanguage })
+          .then(
+            // (response) => ToastAndroid.show(response.data.status, ToastAndroid.SHORT)
+          )
+          .catch((error) =>
+            ToastAndroid.show(error.message, ToastAndroid.SHORT)
+          );
+      }
+    } catch (error) {
+      console.log("Error saving language:", error);
+    }
+  }, [authContext.authToken, urls]);
 
   return (
-    <AppContext.Provider value={objectsToExport}>{children}</AppContext.Provider>
+    <AppContext.Provider value={{ theme, setTheme, language, setLanguage }}>
+      {children}
+    </AppContext.Provider>
   );
 };
-

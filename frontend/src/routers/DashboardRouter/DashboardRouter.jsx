@@ -24,15 +24,19 @@ import ProfileButton from './components/ProfileButton';
 import AppLogo from './components/AppLogo';
 import LeftBurgerIcon from './components/LeftBurgerIcon';
 import CustomDrawerContent from './components/CustomDrawerContent';
+import NavTitle from './components/NavTitle';
+import Strings from '../../constants/strings';
 
 const Drawer = createDrawerNavigator();
-const { drawerRoutes, drawerTitles } = new Constants();
+const { drawerRoutes } = new Constants();
 
 const DashboardRouter = ({ navigation }) => {
   const appContext = useContext(AppContext);
   const authContext = useContext(AuthContext)
   const colors = new Color(appContext.theme);
   const constants = new Constants();
+  const { drawerTitles } = new Strings(appContext.language);
+  
   const styles = StyleSheet.create({
     dashboardIcon: {
       height: 24,
@@ -67,7 +71,7 @@ const DashboardRouter = ({ navigation }) => {
         name={drawerRoutes.HOME_SCREEN}
         component={HomeScreen}
         options={{
-          title: drawerTitles.HOME_SCREEN,
+          title: () => <NavTitle title={ drawerTitles.HOME_SCREEN } colors={colors} />,
           drawerIcon: () => <Image source={HomeIcon} style={styles.dashboardIcon} />,
           headerTitle: () => <AppLogo constants={constants} colors={colors} />,
           drawerItemStyle: styles.drawerItemHidden,
@@ -79,7 +83,7 @@ const DashboardRouter = ({ navigation }) => {
         name={drawerRoutes.SCAN_SCREEN}
         component={ScanScreen}
         options={{
-          title: drawerTitles.SCAN_SCREEN,
+          title: () => <NavTitle title={drawerTitles.SCAN_SCREEN} colors={colors} />,
           drawerIcon: () => <Image source={HomeIcon} style={styles.dashboardIcon} />,
           drawerItemStyle: styles.drawerItemHidden,
           headerLeft: () => <BackButton navigation={navigation} />,
@@ -90,7 +94,7 @@ const DashboardRouter = ({ navigation }) => {
         name={drawerRoutes.REPORT_SCREEN}
         component={ReportScreen}
         options={{
-          title: drawerTitles.REPORT_SCREEN,
+          title: () => <NavTitle title={drawerTitles.REPORT_SCREEN} colors={colors} />,
           headerLeft: () => <BackButton navigation={navigation} />,
           headerTitleAlign: 'center',
           headerTitle: '',
@@ -101,7 +105,7 @@ const DashboardRouter = ({ navigation }) => {
         name={drawerRoutes.PROFILE_SCREEN}
         component={ProfileScreen}
         options={{
-          title: drawerTitles.PROFILE_SCREEN,
+          title: () => <NavTitle title={drawerTitles.PROFILE_SCREEN} colors={colors} />,
           drawerIcon: () => <Image source={UserIcon} style={styles.dashboardIcon} />,
           headerTitle: '',
           headerLeft: () => <BackButton navigation={navigation} />,
@@ -111,7 +115,7 @@ const DashboardRouter = ({ navigation }) => {
         name={drawerRoutes.RATING_SCREEN}
         component={RatingScreen}
         options={{
-          title: drawerTitles.RATING_SCREEN,
+          title: () => <NavTitle title={drawerTitles.RATING_SCREEN} colors={colors} />,
           drawerIcon: () => <Image source={StarIcon} style={styles.dashboardIcon} />,
           headerTitle: '',
           headerLeft: () => <BackButton navigation={navigation} />,
@@ -121,7 +125,7 @@ const DashboardRouter = ({ navigation }) => {
         name={drawerRoutes.CONTACT_SCREEN}
         component={ContactScreen}
         options={{
-          title: drawerTitles.CONTACT_SCREEN,
+          title: () => <NavTitle title={drawerTitles.CONTACT_SCREEN} colors={colors} />,
           drawerIcon: () => <Image source={MessageIcon} style={styles.dashboardIcon} />,
         }}
       />
@@ -129,7 +133,7 @@ const DashboardRouter = ({ navigation }) => {
         name={drawerRoutes.RESULT_SCREEN}
         component={ResultScreen}
         options={{
-          title: drawerTitles.RESULT_SCREEN,
+          title: () => <NavTitle title={drawerTitles.RESULT_SCREEN} colors={colors} />,
           drawerIcon: () => <Image source={MessageIcon} style={styles.dashboardIcon} />,
           headerLeft: () => <BackButton navigation={navigation} />,
           headerTitleAlign: 'center',
@@ -140,7 +144,7 @@ const DashboardRouter = ({ navigation }) => {
         name={drawerRoutes.NOTIFICATION_SCREEN}
         component={NoticationScreen}
         options={{
-          title: drawerTitles.NOTIFICATION_SCREEN,
+          title: () => <NavTitle title={drawerTitles.NOTIFICATION_SCREEN} colors={colors} />,
           drawerIcon: () => <Image source={MessageIcon} style={styles.dashboardIcon} />,
           headerLeft: () => <BackButton navigation={navigation} />,
           headerTitleAlign: 'center',

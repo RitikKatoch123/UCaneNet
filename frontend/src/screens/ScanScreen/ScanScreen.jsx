@@ -115,8 +115,8 @@ export default function ScanScreen() {
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="Grant Permission" />
+        <Text style={styles.message}>{strings.scanScreenPermissionRequest}</Text>
+        <Button onPress={requestPermission} title={strings.scanScreenPermissionButton} />
       </View>
     );
   }

@@ -25,20 +25,19 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('')
 
   const handleFacebookLogin = () => {
-    ToastAndroid.show('Facebook login is not supported yet', ToastAndroid.SHORT)
+    ToastAndroid.show(strings.facebookLoginNotSupported, ToastAndroid.SHORT)
   }
   const handleGoogleLogin = async () => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();      
       authContext.setAuthToken(userInfo.data.user.id);
-      navigation.replace(constants.screenRoutes.BOTTOM_TABS_ROUTER);
+      navigation.replace(constants.screenRoutes.LANGUAGE_SCREEN);
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        ToastAndroid.show('Google Sign-In cancelled', ToastAndroid.SHORT);
+        ToastAndroid.show(strings.signInCancelledError, ToastAndroid.SHORT);
       } else {
-        console.error('Google Sign-In Error:', error);
-        ToastAndroid.show('Google Sign-In failed', ToastAndroid.SHORT);
+        ToastAndroid.show(strings.signInFailedError, ToastAndroid.SHORT);
       }
     }
   }
@@ -56,16 +55,16 @@ const LoginScreen = ({ navigation }) => {
           }          
           authContext.setAuthToken(response.data.authToken);
           ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-          navigation.replace(constants.screenRoutes.BOTTOM_TABS_ROUTER);
+          !authContext.loading && navigation.replace(constants.screenRoutes.LANGUAGE_SCREEN);
         })
         .catch(error=>{
           ToastAndroid.show(error.message, ToastAndroid.SHORT);
         })
       } else {
-        ToastAndroid.show('Invalid email address', ToastAndroid.SHORT)
+        ToastAndroid.show(strings.invalidEmailAddress, ToastAndroid.SHORT)
       }
     } else {
-      ToastAndroid.show('Please fill all fields', ToastAndroid.SHORT)
+      ToastAndroid.show(strings.pleaseFillAllFields, ToastAndroid.SHORT)
     }
   }
   const handleSignUp = () => {
@@ -221,7 +220,7 @@ const LoginScreen = ({ navigation }) => {
     },
     line: {
       flex: 1,
-      maxWidth: 80,
+      maxWidth: 84,
       height: 1,
       backgroundColor: colors.lineBackgroundColor,
       marginHorizontal: 10,

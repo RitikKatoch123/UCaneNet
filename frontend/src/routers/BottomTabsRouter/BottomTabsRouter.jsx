@@ -28,18 +28,13 @@ const BottomTabsRouter = ({ navigation }) => {
 
     const styles = StyleSheet.create({
         icon: {
-            height: 25,
-            width: 25,
+            height: 30,
+            width: 30,
             resizeMode: 'contain',
             transition: 'transform 0.3s ease',
         },
         activeIcon: {
-            shadowColor: colors.primaryColor,
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.3,
-            shadowRadius: 6,
-            elevation: 6,
-            transform: [{ scale: 1.2 }],
+            transform: [{ scale: 1.1 }],
         },
         tabBarStyle: {
             height: 60,

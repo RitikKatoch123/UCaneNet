@@ -46,19 +46,19 @@ const OTPVerificationScreen = ({ navigation }) => {
 
   const handleConfirm = () => {
     if (otp.join('').length === 3) {
-      ToastAndroid.show("Verification successfull", ToastAndroid.SHORT);
+      ToastAndroid.show(strings.verificationSuccessful, ToastAndroid.SHORT);
       // TODO
       navigation.navigate(constants.screenRoutes.LANGUAGE_SCREEN)
     } else {
-      ToastAndroid.show(otp.join(""), ToastAndroid.SHORT)
-      ToastAndroid.show("Invalid OTP", ToastAndroid.SHORT);
+      ToastAndroid.show(strings.invalidOTP, ToastAndroid.SHORT);
     }
   };
 
   const handleResend = () => {
     // TODO
-    ToastAndroid.show("OTP resent again. Please enter the new code.", ToastAndroid.SHORT);
+    ToastAndroid.show(strings.resendOTP, ToastAndroid.SHORT);
   }
+  
   const goBack = () => {
     navigation.goBack();
   };

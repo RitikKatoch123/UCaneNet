@@ -40,7 +40,7 @@ const ProfileScreen = () => {
     })
     .then(response=>{
       if (response.data.status =='success'){
-        ToastAndroid.show("Profile updated successfully", ToastAndroid.SHORT);
+        ToastAndroid.show(strings.profileUpdatedSuccessfully, ToastAndroid.SHORT);
       }
       else{
         throw new Error(`Failed to update: ${response.data.status}`);
@@ -55,7 +55,7 @@ const ProfileScreen = () => {
     try {
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (!permissionResult.granted) {
-        ToastAndroid.show("Permission to access gallery is required!", ToastAndroid.SHORT);
+        ToastAndroid.show(strings.galleryPermissionRequired, ToastAndroid.SHORT);
         return;
       }
 

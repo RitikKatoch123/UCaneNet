@@ -29,7 +29,7 @@ const RatingScreen = () => {
 
   const handleSubmit = () => {
     if(feedback==='' || rating<1){
-      ToastAndroid.show("Either of rating or feedback field is empty", ToastAndroid.SHORT);
+      ToastAndroid.show(strings.fieldIsRequired, ToastAndroid.SHORT);
       return;
     }
     axios.put(urls.rateUrl, {
@@ -38,7 +38,7 @@ const RatingScreen = () => {
     })
     .then((response) => {
       if(response.data.status=='success'){
-        ToastAndroid.show("Thanks for rating us.", ToastAndroid.SHORT)
+        ToastAndroid.show(strings.thanksRating, ToastAndroid.SHORT)
       }
       else {
         ToastAndroid.show(response.data.status, ToastAndroid.SHORT)

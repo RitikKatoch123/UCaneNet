@@ -16,13 +16,13 @@ const PhoneRegistrationScreen = ({ navigation }) => {
   const handleReset = () => {
     if (number) {
       if (validateNumber(number)) {
-        ToastAndroid.show('OTP Sent', ToastAndroid.SHORT)
+        ToastAndroid.show(strings.OTPSent, ToastAndroid.SHORT)
         navigation.navigate(constants.screenRoutes.OTP_VERIFICATION_SCREEN, number)
       } else {
-        ToastAndroid.show('Invalid phone number', ToastAndroid.SHORT)
+        ToastAndroid.show(strings.invalidPhone, ToastAndroid.SHORT)
       }
     } else {
-      ToastAndroid.show('Please fill all fields', ToastAndroid.SHORT)
+      ToastAndroid.show(strings.pleaseFillAllFields, ToastAndroid.SHORT)
     }
   }
   const validateNumber = (number) => {

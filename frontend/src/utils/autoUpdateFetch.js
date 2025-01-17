@@ -10,7 +10,7 @@ const autoUpdateFetch = async () => {
         }
     } catch (error) {
         ToastAndroid.show(
-            error.message,
+            `Error: ${error}`,
             ToastAndroid.SHORT,
         );
     }

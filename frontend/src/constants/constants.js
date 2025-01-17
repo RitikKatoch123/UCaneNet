@@ -30,17 +30,7 @@ export default class Constants {
             NOTIFICATION_SCREEN: "NotificationScreen",
             BOTTOM_TABS_ROUTER: "BottomTabsRouter",
         };
-        this.drawerTitles = {
-            HOME_SCREEN: "My Home",
-            REPORT_SCREEN: "My Reports",
-            PROFILE_SCREEN: "My Profile",
-            RATING_SCREEN: "Rate Us",
-            CONTACT_SCREEN: "Contact Us",
-            SCAN_SCREEN: "Scan Crop",
-            RESULT_SCREEN: 'Result',
-            NOTIFICATION_SCREEN: "Notification",
-            BOTTOM_TABS_ROUTER: "BottomTabsRouter",
-        };
+
         this.SPLASH_DELAY = 1000;
 
         // welcome screen constants
@@ -53,6 +43,7 @@ export default class Constants {
             SCAN_TAB: 'ScanTab',
             NOTIFICATION_TAB: 'NotificationTab',
             PROFILE_TAB: 'ProfileTab',
+            RATING_TAB: 'RatingTab'
         }
     }
 }

@@ -148,7 +148,7 @@ const HomeScreen = ({ navigation }) => {
     }
   })
   
-  const handleStart = () => navigation.navigate(constants.screenRoutes.SCAN_SCREEN);
+  const handleStart = () => navigation.navigate(constants.bottomTabsRoutes.SCAN_TAB);
   const handleBhoomiCare = () => {
     Linking.openURL(authContext.EXPO_APP_WEBSITE).catch((err) => {
       console.error("Failed to open URL: ", err);

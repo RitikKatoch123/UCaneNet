@@ -23,8 +23,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const constants = new Constants();
-  const strings = new Strings(1);
-
+  const strings = new Strings(1);  
   useEffect(() => {
     GoogleSignin.configure({
       webClientId: EXPO_GCP_WEB_CLIENT_ID,
@@ -54,7 +53,7 @@ export const AuthProvider = ({ children }) => {
               setUserEmail(data.email);
               setIsEmailVerified(data.isEmailVerified);
               setIsPhoneVerified(data.isPhoneVerified);
-              setUserPhone(data.phone);
+              setUserPhone(data.phone); 
             } else {
               ToastAndroid.show(response.data.error || strings.signInAuthError, ToastAndroid.SHORT);
             }

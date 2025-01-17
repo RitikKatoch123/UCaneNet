@@ -19,12 +19,12 @@ const PasswordResetScreen = ({ navigation }) => {
   const handleReset = () => {
     if (email) {
       if (validateEmail(email)) {
-        ToastAndroid.show('Password reset link sent. Please check your email', ToastAndroid.SHORT)
+        ToastAndroid.show(strings.passwordResetLinkSent, ToastAndroid.SHORT)
       } else {
-        ToastAndroid.show('Invalid email address', ToastAndroid.SHORT)
+        ToastAndroid.show(strings.invalidEmailAddress, ToastAndroid.SHORT)
       }
     } else {
-      ToastAndroid.show('Please fill all fields', ToastAndroid.SHORT)
+      ToastAndroid.show(strings.pleaseFillAllFields, ToastAndroid.SHORT)
     }
   }
   const validateEmail = (email) => {

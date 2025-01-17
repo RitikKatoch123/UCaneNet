@@ -29,7 +29,6 @@ const SplashScreen = ({ navigation }) => {
 
         const savedTheme = await AsyncStorage.getItem("theme");
         const savedLanguage = await AsyncStorage.getItem("language");
-
         if (savedTheme !== null) appContext.setTheme(parseInt(savedTheme, 10));
         if (savedLanguage !== null) appContext.setLanguage(parseInt(savedLanguage, 10));
 
@@ -72,6 +71,7 @@ const SplashScreen = ({ navigation }) => {
     logoImage: {
       height: 160,
       width: 200,
+      resizeMode: 'contain'
     },
     logoImage2: {
       height: 90,

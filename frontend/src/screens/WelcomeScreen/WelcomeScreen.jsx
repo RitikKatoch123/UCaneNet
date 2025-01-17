@@ -22,39 +22,38 @@ const WelcomeScreen = ({ navigation }) => {
   const constants = new Constants();
   const authContext = useContext(AuthContext)
   const urls = new Urls(authContext);
-  console.log(authContext.authToken);
   
   const handleSkip = () => {
     navigation.replace(constants.screenRoutes.LANGUAGE_SCREEN);
   };
 
   const handleFacebookLogin = () => {
-    ToastAndroid.show('Facebook login is not supported yet.', ToastAndroid.SHORT);
+    ToastAndroid.show(strings.facebookLoginNotSupported, ToastAndroid.SHORT);
   };
 
   const handleGoogleLogin = async () => {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      const user = userInfo.data.user;
-      
-      axios.post(urls.signUpUrl, {
-        username: user.name,
-        email: user.email,
-        profilePicture: user.photo,
-        googleIdToken: user.id,
-        selectedLanguageId: appContext.languageId,
-        selectedThemeId: appContext.themeId,
-      }).then(response=>{
-        authContext.setAuthToken(response.data.user_id);
-        !authContext.loading && navigation.replace(constants.screenRoutes.LANGUAGE_SCREEN);
-      }).catch(error=>{        
+    await GoogleSignin.hasPlayServices();
+    const userInfo = await GoogleSignin.signIn();
+    const user = userInfo.data.user;
+
+    axios.post(urls.signUpUrl, {
+      username: user.name,
+      email: user.email,
+      profilePicture: user.photo,
+      googleIdToken: user.id,
+      selectedLanguageId: appContext.languageId,
+      selectedThemeId: appContext.themeId,
+    }).then(response => {
+      authContext.setAuthToken(response.data.user_id);
+      !authContext.loading && navigation.replace(constants.screenRoutes.LANGUAGE_SCREEN);
+    }).catch(error => {
       const errorMessage = error.code === statusCodes.SIGN_IN_CANCELLED
         ? strings.signInCancelledError
         : error.code === statusCodes.IN_PROGRESS
           ? strings.signInInProgressError
           : error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE
             ? strings.playServiceError
-            : strings.signInFailedError;        
+            : strings.signInFailedError;
       ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
     })
   }
@@ -63,7 +62,7 @@ const WelcomeScreen = ({ navigation }) => {
   };
 
   const handlePhoneSignUp = () => {
-    ToastAndroid.show('Phone signup is not supported yet.', ToastAndroid.SHORT);
+    ToastAndroid.show(strings.phonesignupnotsupported, ToastAndroid.SHORT);
     // navigation.navigate(constants.screenRoutes.PHONE_REGISTRATION_SCREEN);
   };
 
@@ -87,9 +86,13 @@ const WelcomeScreen = ({ navigation }) => {
       flexDirection: 'row',
       alignItems: 'center',
     },
+    tractorLogoContainer: {
+      marginTop: 10,
+    },
     logo: {
-      width: 45,
-      height: 40,
+      width: 43,
+      height: 33,
+      resizeMode: 'contain',
     },
     skipButton: {
       color: 'white',
@@ -136,6 +139,7 @@ const WelcomeScreen = ({ navigation }) => {
       color: colors.signInWithLabelColor1,
       fontSize: 16,
       alignSelf: 'center',
+      marginBottom: 5,
       fontFamily: "AmiriQuran-Regular"
     },
     signInLabelContainer: {
@@ -145,7 +149,7 @@ const WelcomeScreen = ({ navigation }) => {
     },
     line: {
       flex: 1,
-      maxWidth: 80,
+      maxWidth: 84,
       height: 1,
       backgroundColor: colors.lineColor,
       marginHorizontal: 10,
@@ -158,7 +162,7 @@ const WelcomeScreen = ({ navigation }) => {
     },
     buttonType1: {
       flexDirection: 'row',
-      width: 120,
+      width: 140,
       height: 54,
       backgroundColor: colors.buttonType1Background,
       borderRadius: 50,
@@ -177,7 +181,7 @@ const WelcomeScreen = ({ navigation }) => {
       alignItems: 'center',
     },
     buttonType2: {
-      width: 250,
+      width: 304,
       height: 45,
       marginVertical: 10,
       justifyContent: "center",
@@ -220,7 +224,9 @@ const WelcomeScreen = ({ navigation }) => {
           <Text style={styles.headingT1}>{strings.welcomeText}</Text>
           <View style={styles.logoContainer}>
             <Text style={styles.headingT2}>{constants.logoName1}</Text>
-            <Image source={tractorLogo} style={styles.logo} />
+            <View style={styles.tractorLogoContainer}>
+              <Image source={tractorLogo} style={styles.logo} />
+            </View>
             <Text style={styles.headingT2}>{constants.logoName2}</Text>
           </View>
         </View>
@@ -231,23 +237,23 @@ const WelcomeScreen = ({ navigation }) => {
         <Text style={styles.signInWithLabel}>{strings.signInWithLabel}</Text>
         <View style={styles.line} />
       </View>
-        <View style={styles.type1Container}>
-          <TouchableOpacity style={styles.buttonType1} onPress={handleFacebookLogin}>
-            <Image source={facebookLogo} style={styles.loginLogo} />
-            <Text style={styles.buttonType1Text}>{strings.facebookButtonText}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonType1} onPress={handleGoogleLogin}>
+      <View style={styles.type1Container}>
+        <TouchableOpacity style={styles.buttonType1} onPress={handleFacebookLogin}>
+          <Image source={facebookLogo} style={styles.loginLogo} />
+          <Text style={styles.buttonType1Text}>{strings.facebookButtonText}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.buttonType1} onPress={handleGoogleLogin}>
           <Image source={googleLogo} style={styles.loginLogo} />
-            <Text style={styles.buttonType1Text}>{strings.googleButtonText}</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.type2Container}>
+          <Text style={styles.buttonType1Text}>{strings.googleButtonText}</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.type2Container}>
         <TouchableOpacity onPress={handleEmailSignUp} style={styles.buttonType2}>
-            <Text style={styles.buttonType2Text}>{strings.emailButtonText}</Text>
-          </TouchableOpacity>
+          <Text style={styles.buttonType2Text}>{strings.emailButtonText}</Text>
+        </TouchableOpacity>
         <TouchableOpacity onPress={handlePhoneSignUp} style={styles.buttonType2}>
-            <Text style={styles.buttonType2Text}>{strings.phoneButtonText}</Text>
-          </TouchableOpacity>
+          <Text style={styles.buttonType2Text}>{strings.phoneButtonText}</Text>
+        </TouchableOpacity>
       </View>
       <TouchableOpacity onPress={handleSignIn}>
         <Text style={styles.signInOnAlready}>{strings.signInOnAlreadyText}</Text>
