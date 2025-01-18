@@ -8,6 +8,7 @@ export default class Strings {
         this.proxyLabelDescription = "Enter custom backend URL to connect to";
         this.proxySavedSuccessfully = "Proxy Saved successfully";
         this.proxyFailedToSave = "Failed to save proxy";
+        this.backendUrlIsNotSet = "Backend URL is not set";
         if (this.languageCode === 0) { // Hindi
             this.logoSlogan = "किसान मित्र ऐप";
             this.welcomeText = "पर आपका स्वागत है";

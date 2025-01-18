@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     GoogleSignin.configure({
       webClientId: '902917005569-841gll6oh160jqbtg0ou0vgj4hck7tj8.apps.googleusercontent.com',
-      offlineAccess: false,
+      offlineAccess: true,
     });
   }, []);
   const saveProxyUrl = async (url) => {
@@ -79,9 +79,16 @@ export const AuthProvider = ({ children }) => {
             })
             .catch(error => {
               ToastAndroid.show(error.message || strings.signInAuthError, ToastAndroid.SHORT);
+            })
+            .finally(()=>{
               setLoading(false);
             });
         }
+      }).catch(error=>{
+        ToastAndroid.show(strings.backendUrlIsNotSet, ToastAndroid.SHORT)
+      })
+      .finally(()=>{
+        setLoading(false)
       })
 
   };
