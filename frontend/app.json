@@ -4,7 +4,7 @@
     "slug": "bhoomi",
     "version": "1.0.4",
     "runtimeVersion": {
-      "policy": "sdkVersion"
+      "policy": "appVersion"
     },
     "orientation": "portrait",
     "icon": "./assets/icon.png",
