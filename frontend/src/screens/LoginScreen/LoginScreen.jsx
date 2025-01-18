@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, Pressable, ToastAndroid } from 'react-native'
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext } from 'react'
 import facebookLogo from '../../../assets/icons/facebook-logo.png'
 import googleLogo from '../../../assets/icons/google-logo.png'
 import eyeIcon from '../../../assets/icons/eye-icon.png'
@@ -7,11 +7,11 @@ import Strings from '../../constants/strings'
 import Colors from '../../constants/colors'
 import Constants from '../../constants/constants'
 import { AppContext } from '../../contexts/AppContext'
-import backIcon from '../../../assets/icons/back-icon.png'
 import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
 import { AuthContext } from '../../contexts/AuthContext'
 import axios from 'axios'
 import Urls from '../../constants/Urls'
+import LoadingOverlay from '../../components/LoadingOverlay';
 
 const LoginScreen = ({ navigation }) => {
   const appContext = useContext(AppContext)
@@ -23,14 +23,16 @@ const LoginScreen = ({ navigation }) => {
   const [passwordVisible, setPasswordVisible] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false);  // Track loading state
 
   const handleFacebookLogin = () => {
     ToastAndroid.show(strings.facebookLoginNotSupported, ToastAndroid.SHORT)
   }
+
   const handleGoogleLogin = async () => {
     try {
       await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();      
+      const userInfo = await GoogleSignin.signIn();
       authContext.setAuthToken(userInfo.data.user.id);
       navigation.replace(constants.screenRoutes.LANGUAGE_SCREEN);
     } catch (error) {
@@ -41,48 +43,58 @@ const LoginScreen = ({ navigation }) => {
       }
     }
   }
+
   const handleLogin = () => {
     if (email && password) {
       if (validateEmail(email)) {
+        setIsLoading(true);
         axios.put(urls.passwordSigninUrl, {
           email: email,
           password: password
         })
-        .then(response=>{
-          if(response.status!==200){
-            ToastAndroid.show(response.data.message, ToastAndroid.SHORT)
-            return;
-          }          
-          authContext.setAuthToken(response.data.authToken);
-          ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-          !authContext.loading && navigation.replace(constants.screenRoutes.LANGUAGE_SCREEN);
-        })
-        .catch(error=>{
-          ToastAndroid.show(error.message, ToastAndroid.SHORT);
-        })
+          .then(response => {
+            setIsLoading(false);
+            if (response.status !== 200) {
+              ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+              return;
+            }
+            authContext.setAuthToken(response.data.authToken);
+            ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+            !authContext.loading && navigation.replace(constants.screenRoutes.LANGUAGE_SCREEN);
+          })
+          .catch(error => {
+            setIsLoading(false);
+            ToastAndroid.show(error.message, ToastAndroid.SHORT);
+          })
       } else {
-        ToastAndroid.show(strings.invalidEmailAddress, ToastAndroid.SHORT)
+        ToastAndroid.show(strings.invalidEmailAddress, ToastAndroid.SHORT);
       }
     } else {
-      ToastAndroid.show(strings.pleaseFillAllFields, ToastAndroid.SHORT)
+      ToastAndroid.show(strings.pleaseFillAllFields, ToastAndroid.SHORT);
     }
   }
+
   const handleSignUp = () => {
-    navigation.navigate(constants.screenRoutes.SIGN_UP_SCREEN)
+    navigation.navigate(constants.screenRoutes.SIGN_UP_SCREEN);
   }
+
   const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible)
+    setPasswordVisible(!passwordVisible);
   }
+
   const validateEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return re.test(email)
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
   }
+
   const handleForgotPassword = () => {
     navigation.replace(constants.screenRoutes.PASSWORD_RESET_SCREEN);
   }
+
   const goBack = () => {
-    navigation.goBack()
+    navigation.goBack();
   }
+
   const styles = StyleSheet.create({
     container: {
       width: '100%',
@@ -210,7 +222,6 @@ const LoginScreen = ({ navigation }) => {
       color: colors.alreadyHaveAccountTextColor,
       fontSize: 14,
       fontFamily: 'AmiriQuran-Regular',
-
     },
     signInLabelContainer: {
       flexDirection: 'row',
@@ -287,8 +298,10 @@ const LoginScreen = ({ navigation }) => {
       height: 10
     }
   })
+
   return (
     <View style={styles.container}>
+      <LoadingOverlay visible={isLoading} /> {/* Show overlay when loading */}
       <View style={styles.overlay}>
         <View style={[styles.circle1, styles.circles]} />
         <View style={[styles.circle2, styles.circles]} />
@@ -358,4 +371,4 @@ const LoginScreen = ({ navigation }) => {
   )
 }
 
-export default LoginScreen
+export default LoginScreen;

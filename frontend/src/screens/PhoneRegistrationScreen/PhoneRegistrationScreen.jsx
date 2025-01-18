@@ -1,36 +1,52 @@
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, Pressable, ToastAndroid } from 'react-native'
-import React, { useState, useContext } from 'react'
-import Strings from '../../constants/strings'
-import Colors from '../../constants/colors'
-import Constants from '../../constants/constants'
-import { AppContext } from '../../contexts/AppContext'
-import backIcon from '../../../assets/icons/back-icon.png'
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity,
+  Image,
+  Pressable,
+  ToastAndroid,
+} from 'react-native';
+import React, { useState, useContext } from 'react';
+import Strings from '../../constants/strings';
+import Colors from '../../constants/colors';
+import Constants from '../../constants/constants';
+import { AppContext } from '../../contexts/AppContext';
+import backIcon from '../../../assets/icons/back-icon.png';
+import LoadingOverlay from "../../components/LoadingOverlay"; // Import the LoadingOverlay component
 
 const PhoneRegistrationScreen = ({ navigation }) => {
-  const appContext = useContext(AppContext)
-  const strings = new Strings(appContext.language)
-  const colors = new Colors(appContext.theme)
-  const constants = new Constants()
-  const [number, setNumber] = useState('')
-  // TODO: fonts
+  const appContext = useContext(AppContext);
+  const strings = new Strings(appContext.language);
+  const colors = new Colors(appContext.theme);
+  const constants = new Constants();
+  const [number, setNumber] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const handleReset = () => {
     if (number) {
       if (validateNumber(number)) {
-        ToastAndroid.show(strings.OTPSent, ToastAndroid.SHORT)
-        navigation.navigate(constants.screenRoutes.OTP_VERIFICATION_SCREEN, number)
+        setLoading(true);
+        ToastAndroid.show(strings.OTPSent, ToastAndroid.SHORT);
+        navigation.navigate(constants.screenRoutes.OTP_VERIFICATION_SCREEN, number);
+        setLoading(false);
       } else {
-        ToastAndroid.show(strings.invalidPhone, ToastAndroid.SHORT)
+        ToastAndroid.show(strings.invalidPhone, ToastAndroid.SHORT);
       }
     } else {
-      ToastAndroid.show(strings.pleaseFillAllFields, ToastAndroid.SHORT)
+      ToastAndroid.show(strings.pleaseFillAllFields, ToastAndroid.SHORT);
     }
-  }
+  };
+
   const validateNumber = (number) => {
-    return number.length === 10
-  }
+    return number.length === 10;
+  };
+
   const goBack = () => {
-    navigation.goBack()
-  }
+    navigation.goBack();
+  };
+
   const styles = StyleSheet.create({
     container: {
       width: '100%',
@@ -60,7 +76,7 @@ const PhoneRegistrationScreen = ({ navigation }) => {
       width: 96,
       top: -21,
       left: -46,
-      zIndex: 1
+      zIndex: 1,
     },
     circle2: {
       backgroundColor: colors.circle2BackgroundColor,
@@ -85,7 +101,7 @@ const PhoneRegistrationScreen = ({ navigation }) => {
       marginTop: 200,
       color: colors.signUpHeadingColor,
       fontSize: 36.41,
-      fontFamily: 'Average-Sans-Regular',
+      fontFamily: 'AverageSans-Regular',
     },
     inputGroup: {
       marginVertical: 10,
@@ -95,7 +111,7 @@ const PhoneRegistrationScreen = ({ navigation }) => {
       color: colors.inputLabelColor,
       fontSize: 16,
       marginBottom: 30,
-      fontFamily: 'Altasi-Regular',
+      fontFamily: 'Alatsi-Regular',
     },
     input: {
       width: 280,
@@ -110,7 +126,7 @@ const PhoneRegistrationScreen = ({ navigation }) => {
       borderColor: colors.inputBorderColorEmail,
       color: colors.inputTextColor,
       fontSize: 17,
-      fontFamily: 'Amiri-Quran-Colored',
+      fontFamily: 'AmiriQuran-Regular',
     },
     signupButton: {
       width: 248,
@@ -127,7 +143,7 @@ const PhoneRegistrationScreen = ({ navigation }) => {
       textAlign: 'center',
       textTransform: 'uppercase',
       fontWeight: '300',
-      fontFamily: 'Average-Sans-Regular',
+      fontFamily: 'AverageSans-Regular',
     },
     shadow: {
       shadowColor: colors.buttonType1ShadowColor,
@@ -142,17 +158,18 @@ const PhoneRegistrationScreen = ({ navigation }) => {
       left: 27,
       height: 38,
       width: 38,
-      backgroundColor: "white",
-      justifyContent: "center",
-      alignItems: "center",
+      backgroundColor: 'white',
+      justifyContent: 'center',
+      alignItems: 'center',
       borderRadius: 10,
-      zIndex: 2
+      zIndex: 2,
     },
     backImage: {
       width: 5,
-      height: 10
-    }
-  })
+      height: 10,
+    },
+  });
+
   return (
     <View style={styles.container}>
       <View style={styles.overlay}>
@@ -177,11 +194,15 @@ const PhoneRegistrationScreen = ({ navigation }) => {
           maxLength={10}
         />
       </View>
-      <Pressable style={({ pressed }) => [styles.signupButton, pressed && { opacity: 0.6 }, styles.shadow]} onPress={handleReset}>
+      <Pressable
+        style={({ pressed }) => [styles.signupButton, pressed && { opacity: 0.6 }, styles.shadow]}
+        onPress={handleReset}
+      >
         <Text style={styles.signupButtonText}>{strings.phoneRegButtonText}</Text>
       </Pressable>
+      {loading && <LoadingOverlay />}
     </View>
-  )
-}
+  );
+};
 
-export default PhoneRegistrationScreen
+export default PhoneRegistrationScreen;

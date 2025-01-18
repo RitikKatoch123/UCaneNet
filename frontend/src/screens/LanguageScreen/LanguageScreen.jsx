@@ -6,21 +6,31 @@ import Constants from '../../constants/constants'
 import { AppContext } from '../../contexts/AppContext'
 import languageBackground from "../../../assets/icons/language-background.jpg"
 import tractorLogo from '../../../assets/icons/tractor-icon.png';
+import LoadingOverlay from '../../components/LoadingOverlay'
 
 const LanguageScreen = ({ navigation }) => {
   const appContext = useContext(AppContext)
   const strings = new Strings(appContext.language)
   const colors = new Colors(appContext.theme)
   const constants = new Constants()
+  const [isLoading, setIsLoading] = useState(false)
+
   const handleHindi = async () => {
+    setIsLoading(true)
     await appContext.setLanguage(0)
+    setIsLoading(false)
     navigation.replace(constants.drawerRoutes.BOTTOM_TABS_ROUTER)
   }
+
   const handleEnglish = async () => {
+    setIsLoading(true)
     await appContext.setLanguage(1)
+    setIsLoading(false)
     navigation.replace(constants.drawerRoutes.BOTTOM_TABS_ROUTER)
   }
+
   const handleDiscover = () => {
+    // Handle discover action here
   }
 
   const styles = StyleSheet.create({
@@ -185,6 +195,7 @@ const LanguageScreen = ({ navigation }) => {
       <Text style={styles.slogan}>
         {strings.langscreenFooterText}
       </Text>
+      {isLoading && <LoadingOverlay />}
     </ImageBackground>
   )
 }

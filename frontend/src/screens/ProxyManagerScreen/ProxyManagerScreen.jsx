@@ -1,20 +1,23 @@
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, Pressable, ToastAndroid } from 'react-native'
-import React, { useState, useContext } from 'react'
-import Strings from '../../constants/strings'
-import Colors from '../../constants/colors'
-import Constants from '../../constants/constants'
-import { AppContext } from '../../contexts/AppContext'
-import { AuthContext } from '../../contexts/AuthContext'
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, Pressable, ToastAndroid } from 'react-native';
+import React, { useState, useContext } from 'react';
+import Strings from '../../constants/strings';
+import Colors from '../../constants/colors';
+import Constants from '../../constants/constants';
+import { AppContext } from '../../contexts/AppContext';
+import { AuthContext } from '../../contexts/AuthContext';
+import LoadingOverlay from '../../components/LoadingOverlay';
 
 const ProxyManagerScreen = ({ navigation }) => {
-    const appContext = useContext(AppContext)
-    const strings = new Strings(appContext.language)
-    const colors = new Colors(appContext.theme)
-    const constants = new Constants()
+    const appContext = useContext(AppContext);
+    const strings = new Strings(appContext.language);
+    const colors = new Colors(appContext.theme);
+    const constants = new Constants();
     const authContext = useContext(AuthContext);
     const [url, setUrl] = useState(authContext.EXPO_BACKEND_API_URL);
+    const [loading, setLoading] = useState(false);
     const handleReset = () => {
         if (url !== null) {
+            setLoading(true);
             authContext.saveProxyUrl(url)
                 .then(() => {
                     ToastAndroid.show(strings.proxySavedSuccessfully, ToastAndroid.SHORT);
@@ -22,8 +25,11 @@ const ProxyManagerScreen = ({ navigation }) => {
                 .catch(error => {
                     ToastAndroid.show(strings.proxyFailedToSave, ToastAndroid.SHORT);
                 })
+                .finally(()=>{
+                    setLoading(false);
+                });
         }
-    }
+    };
 
     const styles = StyleSheet.create({
         container: {
@@ -69,14 +75,13 @@ const ProxyManagerScreen = ({ navigation }) => {
             top: -200,
             left: 298,
         },
-        heading: {
-        },
+        heading: {},
         headingText: {
             marginTop: 200,
             color: colors.signUpHeadingColor,
             fontSize: 36.41,
             fontFamily: 'AverageSans-Regular',
-            textAlign: 'center'
+            textAlign: 'center',
         },
         inputGroup: {
             marginVertical: 10,
@@ -133,18 +138,20 @@ const ProxyManagerScreen = ({ navigation }) => {
             left: 27,
             height: 38,
             width: 38,
-            backgroundColor: "white",
-            justifyContent: "center",
-            alignItems: "center",
-            borderRadius: 10
+            backgroundColor: 'white',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 10,
         },
         backImage: {
             width: 5,
-            height: 10
-        }
-    })
+            height: 10,
+        },
+    });
+
     return (
         <View style={styles.container}>
+            {loading && <LoadingOverlay />}
             <View style={styles.overlay}>
                 <View style={[styles.circle1, styles.circles]} />
                 <View style={[styles.circle2, styles.circles]} />
@@ -162,11 +169,15 @@ const ProxyManagerScreen = ({ navigation }) => {
                     onChangeText={setUrl}
                 />
             </View>
-            <Pressable style={({ pressed }) => [styles.signupButton, pressed && { opacity: 0.6 }, styles.shadow]} onPress={handleReset}>
+            <Pressable
+                style={({ pressed }) => [styles.signupButton, pressed && { opacity: 0.6 }, styles.shadow]}
+                onPress={handleReset}
+                disabled={loading}
+            >
                 <Text style={styles.signupButtonText}>{strings.profileSaveLabel}</Text>
             </Pressable>
         </View>
-    )
-}
+    );
+};
 
-export default ProxyManagerScreen
+export default ProxyManagerScreen;

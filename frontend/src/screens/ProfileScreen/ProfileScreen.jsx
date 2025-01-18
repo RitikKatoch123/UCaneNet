@@ -1,28 +1,30 @@
-import { Image, StyleSheet, Text, View, TextInput, Pressable, ToastAndroid, TouchableOpacity } from 'react-native'
-import React, { useContext, useState } from 'react'
-import Strings from '../../constants/strings'
-import Colors from '../../constants/colors'
-import Constants from '../../constants/constants'
-import { AppContext } from '../../contexts/AppContext'
-import { AuthContext } from '../../contexts/AuthContext'
-import placeHolderImage from "../../../assets/profile-picture-avatar.png"
+import { Image, StyleSheet, Text, View, TextInput, Pressable, ToastAndroid } from 'react-native';
+import React, { useContext, useState, useEffect } from 'react';
+import Strings from '../../constants/strings';
+import Colors from '../../constants/colors';
+import Constants from '../../constants/constants';
+import { AppContext } from '../../contexts/AppContext';
+import { AuthContext } from '../../contexts/AuthContext';
+import placeHolderImage from "../../../assets/profile-picture-avatar.png";
 import cameraIcon from "../../../assets/icons/camera-icon.png";
 import * as ImagePicker from 'expo-image-picker';
-import axios from 'axios'
+import axios from 'axios';
 import * as FileSystem from "expo-file-system";
-import Urls from '../../constants/Urls'
+import Urls from '../../constants/Urls';
+import LoadingOverlay from '../../components/LoadingOverlay';
 
 const ProfileScreen = () => {
-  const appContext = useContext(AppContext)
-  const authContext = useContext(AuthContext)
-  const strings = new Strings(appContext.language)
-  const colors = new Colors(appContext.theme)
-  const constants = new Constants()
-  const [number, setNumber] = useState(authContext.userPhone)
-  const [fullName, setFullName] = useState(authContext.userName)
-  const [email, setEmail] = useState(authContext.userEmail)
+  const appContext = useContext(AppContext);
+  const authContext = useContext(AuthContext);
+  const strings = new Strings(appContext.language);
+  const colors = new Colors(appContext.theme);
+  const constants = new Constants();
+  const [number, setNumber] = useState(authContext.userPhone);
+  const [fullName, setFullName] = useState(authContext.userName);
+  const [email, setEmail] = useState(authContext.userEmail);
   const [selectedImage, setSelectedImage] = useState(null);
-  
+  const [loading, setLoading] = useState(false);
+
   const handleSave = async () => {
     const authToken = authContext.authToken;
     let base64Image = null;
@@ -32,24 +34,26 @@ const ProfileScreen = () => {
       });
     }
     const urls = new Urls(authContext);
+    setLoading(true);
     authToken && axios.put(urls.updateProfileUrl, {
       "avatarUrl": base64Image,
       "username": fullName,
       "email": email,
       "phone": number,
     })
-    .then(response=>{
-      if (response.data.status =='success'){
-        ToastAndroid.show(strings.profileUpdatedSuccessfully, ToastAndroid.SHORT);
-      }
-      else{
-        throw new Error(`Failed to update: ${response.data.status}`);
-      }
-    })
-    .catch(error=>{
-      ToastAndroid.show(error.message, ToastAndroid.SHORT);
-    })
-  }
+      .then(response => {
+        setLoading(false);
+        if (response.data.status === 'success') {
+          ToastAndroid.show(strings.profileUpdatedSuccessfully, ToastAndroid.SHORT);
+        } else {
+          throw new Error(`Failed to update: ${response.data.status}`);
+        }
+      })
+      .catch(error => {
+        setLoading(false);
+        ToastAndroid.show(error.message, ToastAndroid.SHORT);
+      });
+  };
 
   const handlePickPicture = async () => {
     try {
@@ -227,10 +231,11 @@ const ProfileScreen = () => {
       left: 80,
       top: 70
     }
-  })
+  });
 
   return (
     <View style={styles.container}>
+      {loading && <LoadingOverlay />}
       <View style={styles.overlay}>
         <View style={[styles.circle1, styles.circles]} />
         <View style={[styles.circle2, styles.circles]} />
@@ -290,7 +295,7 @@ const ProfileScreen = () => {
         </Pressable>
       </View>
     </View>
-  )
-}
+  );
+};
 
-export default ProfileScreen
+export default ProfileScreen;

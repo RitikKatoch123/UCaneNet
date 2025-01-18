@@ -1,5 +1,5 @@
 import { Image, ImageBackground, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import welcomeBackground from '../../../assets/welcome-background.png';
 import tractorLogo from '../../../assets/icons/tractor-icon.png';
@@ -9,20 +9,21 @@ import Strings from '../../constants/strings';
 import Colors from '../../constants/colors';
 import Constants from '../../constants/constants';
 import { AppContext } from '../../contexts/AppContext';
-import { useContext } from 'react';
+import { AuthContext } from '../../contexts/AuthContext';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import axios from 'axios';
-import { AuthContext } from '../../contexts/AuthContext'
 import Urls from '../../constants/Urls';
+import LoadingOverlay from '../../components/LoadingOverlay';
 
 const WelcomeScreen = ({ navigation }) => {
+  const [isLoading, setIsLoading] = useState(false); // Add loading state
   const appContext = useContext(AppContext);
   const strings = new Strings(appContext.language);
   const colors = new Colors(appContext.theme);
   const constants = new Constants();
-  const authContext = useContext(AuthContext)
+  const authContext = useContext(AuthContext);
   const urls = new Urls(authContext);
-  
+
   const handleSkip = () => {
     navigation.replace(constants.screenRoutes.LANGUAGE_SCREEN);
   };
@@ -32,21 +33,25 @@ const WelcomeScreen = ({ navigation }) => {
   };
 
   const handleGoogleLogin = async () => {
-    await GoogleSignin.hasPlayServices();
-    const userInfo = await GoogleSignin.signIn();
-    const user = userInfo.data.user;
+    setIsLoading(true); // Start loading
 
-    axios.post(urls.signUpUrl, {
-      username: user.name,
-      email: user.email,
-      profilePicture: user.photo,
-      googleIdToken: user.id,
-      selectedLanguageId: appContext.languageId,
-      selectedThemeId: appContext.themeId,
-    }).then(response => {
-      authContext.setAuthToken(response.data.user_id);
-      !authContext.loading && navigation.replace(constants.screenRoutes.LANGUAGE_SCREEN);
-    }).catch(error => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      const user = userInfo.data.user;
+
+      await axios.post(urls.signUpUrl, {
+        username: user.name,
+        email: user.email,
+        profilePicture: user.photo,
+        googleIdToken: user.id,
+        selectedLanguageId: appContext.languageId,
+        selectedThemeId: appContext.themeId,
+      }).then(response => {
+        authContext.setAuthToken(response.data.user_id);
+        navigation.replace(constants.screenRoutes.LANGUAGE_SCREEN);
+      });
+    } catch (error) {
       const errorMessage = error.code === statusCodes.SIGN_IN_CANCELLED
         ? strings.signInCancelledError
         : error.code === statusCodes.IN_PROGRESS
@@ -54,16 +59,19 @@ const WelcomeScreen = ({ navigation }) => {
           : error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE
             ? strings.playServiceError
             : strings.signInFailedError;
+
       ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
-    })
-  }
+    } finally {
+      setIsLoading(false); // Stop loading after the request completes
+    }
+  };
+
   const handleEmailSignUp = () => {
     navigation.navigate(constants.screenRoutes.SIGN_UP_SCREEN);
   };
 
   const handlePhoneSignUp = () => {
     ToastAndroid.show(strings.phonesignupnotsupported, ToastAndroid.SHORT);
-    // navigation.navigate(constants.screenRoutes.PHONE_REGISTRATION_SCREEN);
   };
 
   const handleSignIn = () => {
@@ -216,6 +224,7 @@ const WelcomeScreen = ({ navigation }) => {
         colors={colors.gradientColors}
         style={styles.overlay}
       />
+      <LoadingOverlay isLoading={isLoading} /> {/* Show loading overlay */}
       <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
         <Text style={styles.skipButtonText}>{strings.skipButtonText}</Text>
       </TouchableOpacity>

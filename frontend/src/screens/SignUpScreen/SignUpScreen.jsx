@@ -11,9 +11,10 @@ import { AuthContext } from '../../contexts/AuthContext'
 import axios from 'axios'
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import Urls from '../../constants/Urls'
+import LoadingOverlay from '../../components/LoadingOverlay'
 
 const SignUpScreen = ({ navigation }) => {
-  const appContext = useContext(AppContext) 
+  const appContext = useContext(AppContext)
   const authContext = useContext(AuthContext)
   const strings = new Strings(appContext.language)
   const colors = new Colors(appContext.theme)
@@ -22,6 +23,7 @@ const SignUpScreen = ({ navigation }) => {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
   const urls = new Urls(authContext);
 
   const handleFacebookLogin = () => {
@@ -29,6 +31,7 @@ const SignUpScreen = ({ navigation }) => {
   }
 
   const handleGoogleLogin = async () => {
+    setLoading(true)  // Show loading overlay when starting the async task
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
@@ -54,12 +57,15 @@ const SignUpScreen = ({ navigation }) => {
         console.error(error);
         ToastAndroid.show(strings.signInFailedError, ToastAndroid.SHORT);
       }
+    } finally {
+      setLoading(false)  // Hide loading overlay after the task is done
     }
   };
 
   const handleSignUp = () => {
     if (fullName && email && password) {
       if (validateEmail(email)) {
+        setLoading(true)  // Show loading overlay when starting the async task
         axios.post(urls.signUpUrl, {
           username: fullName,
           email: email,
@@ -76,6 +82,9 @@ const SignUpScreen = ({ navigation }) => {
           .catch((error) => {
             console.error(error);
             ToastAndroid.show(strings.signUpFailed, ToastAndroid.SHORT);
+          })
+          .finally(() => {
+            setLoading(false)  // Hide loading overlay after the task is done
           });
       } else {
         ToastAndroid.show(strings.invalidEmailAddress, ToastAndroid.SHORT);
@@ -290,9 +299,10 @@ const SignUpScreen = ({ navigation }) => {
       elevation: 0.5,
     },
   })
-  
+
   return (
     <View style={styles.container}>
+      {loading && <LoadingOverlay />}
       <View style={styles.overlay}>
         <View style={[styles.circle1, styles.circles]} />
         <View style={[styles.circle2, styles.circles]} />

@@ -1,54 +1,60 @@
-import { Image, StyleSheet, Text, ToastAndroid, View } from 'react-native'
-import React, { useState, useContext, useEffect } from 'react'
+import { Image, StyleSheet, Text, ToastAndroid, View } from 'react-native';
+import React, { useState, useContext, useEffect } from 'react';
 import { Pressable, TextInput } from 'react-native-gesture-handler';
 import splashIconMain from '../../../assets/icons/splash-icon-main.png';
-import Strings from '../../constants/strings'
-import Colors from '../../constants/colors'
-import Constants from '../../constants/constants'
-import { AppContext } from '../../contexts/AppContext'
+import Strings from '../../constants/strings';
+import Colors from '../../constants/colors';
+import Constants from '../../constants/constants';
+import { AppContext } from '../../contexts/AppContext';
 import tractorLogo from '../../../assets/icons/tractor-icon.png';
 import axios from 'axios';
 import { AuthContext } from '../../contexts/AuthContext';
 import Urls from '../../constants/Urls';
- 
+import LoadingOverlay from "../../components/LoadingOverlay";
+
 const RatingScreen = () => {
-  const appContext = useContext(AppContext)
-  const strings = new Strings(appContext.language)
-  const colors = new Colors(appContext.theme)
-  const constants = new Constants()
+  const appContext = useContext(AppContext);
+  const strings = new Strings(appContext.language);
+  const colors = new Colors(appContext.theme);
+  const constants = new Constants();
   const authContext = useContext(AuthContext);
   const urls = new Urls(authContext);
 
   const [rating, setRating] = useState(4);
   const [ratingAnnotation, setRatingAnnotation] = useState("");
   const [feedback, setFeedback] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  useEffect(()=>{
-    setRatingAnnotation(strings.ratingsArray[rating])
-  }, [rating])
+  useEffect(() => {
+    setRatingAnnotation(strings.ratingsArray[rating]);
+  }, [rating]);
 
   const handleSubmit = () => {
-    if(feedback==='' || rating<1){
+    if (feedback === '' || rating < 1) {
       ToastAndroid.show(strings.fieldIsRequired, ToastAndroid.SHORT);
       return;
     }
+
+    setLoading(true);
     axios.put(urls.rateUrl, {
       rated_app: rating.toString(),
       review: feedback
     })
-    .then((response) => {
-      if(response.data.status=='success'){
-        ToastAndroid.show(strings.thanksRating, ToastAndroid.SHORT)
-      }
-      else {
-        ToastAndroid.show(response.data.status, ToastAndroid.SHORT)
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      ToastAndroid.show(error.message, ToastAndroid.SHORT);
-    });
-  }
+      .then((response) => {
+        setLoading(false);
+        if (response.data.status === 'success') {
+          ToastAndroid.show(strings.thanksRating, ToastAndroid.SHORT);
+        } else {
+          ToastAndroid.show(response.data.status, ToastAndroid.SHORT);
+        }
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error);
+        ToastAndroid.show(error.message, ToastAndroid.SHORT);
+      });
+  };
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -65,13 +71,13 @@ const RatingScreen = () => {
       height: 172,
       width: 323,
       backgroundColor: colors.primaryColor,
-      borderRadius: 10
+      borderRadius: 10,
     },
     appProfile: {
       borderWidth: 13,
       borderColor: colors.appBackgroundColor,
       borderRadius: 100,
-      marginTop: -40
+      marginTop: -40,
     },
     appProfileImage: {
       height: 60.75,
@@ -89,7 +95,7 @@ const RatingScreen = () => {
     logoContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginTop: 10
+      marginTop: 10,
     },
     logo: {
       width: 25,
@@ -157,8 +163,8 @@ const RatingScreen = () => {
       justifyContent: 'center',
       marginBottom: 20,
     },
-  })
-  
+  });
+
   return (
     <View style={styles.container}>
       <View style={styles.centralCard}>
@@ -180,7 +186,7 @@ const RatingScreen = () => {
         <View style={styles.ratingBarContainer}>
           {Array.from({ length: 5 }).map((_, index) => (
             <Pressable key={index} onPress={() => setRating(index + 1)}>
-              <Text style={[{ fontSize: 50, color: index < rating ? colors.ratingColor : colors.ratingLessColor, }, styles.ratingShadow]}>
+              <Text style={[{ fontSize: 50, color: index < rating ? colors.ratingColor : colors.ratingLessColor }, styles.ratingShadow]}>
                 {strings.ratingCharacter}
               </Text>
             </Pressable>
@@ -189,9 +195,10 @@ const RatingScreen = () => {
         <Text style={styles.feedbackLabel}>
           {strings.feedbackLabel}
         </Text>
-        <TextInput style={styles.feedbackInput} 
-        placeholder={strings.feedbackLabel}
-        placeholderTextColor={colors.placeholderColorRating}
+        <TextInput
+          style={styles.feedbackInput}
+          placeholder={strings.feedbackLabel}
+          placeholderTextColor={colors.placeholderColorRating}
           cursorColor={colors.ratingColor}
           value={feedback}
           onChangeText={setFeedback}
@@ -200,8 +207,9 @@ const RatingScreen = () => {
           <Text style={styles.signupButtonText}>{strings.submitText}</Text>
         </Pressable>
       </View>
+      {loading && <LoadingOverlay />}
     </View>
-  )
-}
+  );
+};
 
-export default RatingScreen
+export default RatingScreen;

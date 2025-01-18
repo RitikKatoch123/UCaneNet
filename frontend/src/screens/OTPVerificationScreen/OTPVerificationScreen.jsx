@@ -11,17 +11,19 @@ import {
 import React, { useState, useRef, useContext } from 'react';
 import backIcon from '../../../assets/icons/back-icon.png';
 import { AppContext } from '../../contexts/AppContext';
-import Strings from '../../constants/strings'
-import Colors from '../../constants/colors'
-import Constants from '../../constants/constants'
+import Strings from '../../constants/strings';
+import Colors from '../../constants/colors';
+import Constants from '../../constants/constants';
+import LoadingOverlay from "../../components/LoadingOverlay"; // Import the LoadingOverlay component
 
 const OTPVerificationScreen = ({ navigation }) => {
-  const appContext = useContext(AppContext)
-  const strings = new Strings(appContext.language)
-  const colors = new Colors(appContext.theme)
-  const constants = new Constants()
+  const appContext = useContext(AppContext);
+  const strings = new Strings(appContext.language);
+  const colors = new Colors(appContext.theme);
+  const constants = new Constants();
 
   const [otp, setOtp] = useState(['', '', '', '']);
+  const [loading, setLoading] = useState(false);
   const inputs = useRef([]);
 
   const handleChange = (text, index) => {
@@ -46,19 +48,21 @@ const OTPVerificationScreen = ({ navigation }) => {
 
   const handleConfirm = () => {
     if (otp.join('').length === 3) {
+      setLoading(true);
       ToastAndroid.show(strings.verificationSuccessful, ToastAndroid.SHORT);
-      // TODO
-      navigation.navigate(constants.screenRoutes.LANGUAGE_SCREEN)
+      navigation.navigate(constants.screenRoutes.LANGUAGE_SCREEN);
+      setLoading(false);
     } else {
       ToastAndroid.show(strings.invalidOTP, ToastAndroid.SHORT);
     }
   };
 
   const handleResend = () => {
-    // TODO
+    setLoading(true);
     ToastAndroid.show(strings.resendOTP, ToastAndroid.SHORT);
-  }
-  
+    setLoading(false);
+  };
+
   const goBack = () => {
     navigation.goBack();
   };
@@ -84,12 +88,10 @@ const OTPVerificationScreen = ({ navigation }) => {
     },
     circle1: {
       backgroundColor: 'transparent',
-      height: 36,
-      width: 36,
-      borderWidth: 30,
-      borderColor: colors.circle1BorderColor,
       height: 96,
       width: 96,
+      borderWidth: 30,
+      borderColor: colors.circle1BorderColor,
       top: -21,
       left: -46,
     },
@@ -117,7 +119,7 @@ const OTPVerificationScreen = ({ navigation }) => {
       marginTop: 200,
       color: colors.signUpHeadingColor,
       fontSize: 36.41,
-      fontFamily: 'Average-Sans-Regular',
+      fontFamily: 'AverageSans-Regular',
     },
     inputGroup: {
       marginVertical: 10,
@@ -127,7 +129,7 @@ const OTPVerificationScreen = ({ navigation }) => {
       color: colors.inputLabelColor,
       fontSize: 16,
       marginBottom: 30,
-      fontFamily: 'Altasi-Regular',
+      fontFamily: 'Alatsi-Regular',
     },
     input: {
       width: 65,
@@ -144,7 +146,7 @@ const OTPVerificationScreen = ({ navigation }) => {
       borderColor: colors.inputBorderColorPassword,
       color: colors.circle3Color,
       fontSize: 27,
-      fontFamily: 'Amiri-Quran-Colored',
+      fontFamily: 'AmiriQuran-Regular',
     },
     signupButton: {
       width: 248,
@@ -161,7 +163,7 @@ const OTPVerificationScreen = ({ navigation }) => {
       textAlign: 'center',
       textTransform: 'uppercase',
       fontWeight: '300',
-      fontFamily: 'Average-Sans-Regular',
+      fontFamily: 'AverageSans-Regular',
     },
     shadow: {
       shadowColor: colors.buttonType1ShadowColor,
@@ -222,9 +224,14 @@ const OTPVerificationScreen = ({ navigation }) => {
           ))}
         </View>
       </View>
-      <Pressable style={({ pressed }) => [styles.alreadyHaveAccount, pressed && { opacity: 0.6 }]} onPress={handleResend}>
+      <Pressable
+        style={({ pressed }) => [styles.alreadyHaveAccount, pressed && { opacity: 0.6 }]}
+        onPress={handleResend}
+      >
         <Text style={styles.alreadyHaveAccountText}>{strings.otpButtonText}</Text>
       </Pressable>
+
+      {loading && <LoadingOverlay />}
     </View>
   );
 };

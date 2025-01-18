@@ -1,39 +1,55 @@
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, Pressable, ToastAndroid } from 'react-native'
-import React, { useState, useContext } from 'react'
-import facebookLogo from '../../../assets/icons/facebook-logo.png'
-import googleLogo from '../../../assets/icons/google-logo.png'
-import eyeIcon from '../../../assets/icons/eye-icon.png'
-import Strings from '../../constants/strings'
-import Colors from '../../constants/colors'
-import Constants from '../../constants/constants'
-import { AppContext } from '../../contexts/AppContext'
-import backIcon from '../../../assets/icons/back-icon.png'
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity,
+  Image,
+  Pressable,
+  ToastAndroid,
+} from 'react-native';
+import React, { useState, useContext } from 'react';
+import facebookLogo from '../../../assets/icons/facebook-logo.png';
+import googleLogo from '../../../assets/icons/google-logo.png';
+import eyeIcon from '../../../assets/icons/eye-icon.png';
+import Strings from '../../constants/strings';
+import Colors from '../../constants/colors';
+import Constants from '../../constants/constants';
+import { AppContext } from '../../contexts/AppContext';
+import backIcon from '../../../assets/icons/back-icon.png';
+import LoadingOverlay from "../../components/LoadingOverlay"; // Import the LoadingOverlay component
 
 const PasswordResetScreen = ({ navigation }) => {
-  const appContext = useContext(AppContext)
-  const strings = new Strings(appContext.language)
-  const colors = new Colors(appContext.theme)
-  const constants = new Constants()
-  const [email, setEmail] = useState('')
-  // TODO: fonts
+  const appContext = useContext(AppContext);
+  const strings = new Strings(appContext.language);
+  const colors = new Colors(appContext.theme);
+  const constants = new Constants();
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const handleReset = () => {
     if (email) {
       if (validateEmail(email)) {
-        ToastAndroid.show(strings.passwordResetLinkSent, ToastAndroid.SHORT)
+        setLoading(true);
+        ToastAndroid.show(strings.passwordResetLinkSent, ToastAndroid.SHORT);
+        setLoading(false);
       } else {
-        ToastAndroid.show(strings.invalidEmailAddress, ToastAndroid.SHORT)
+        ToastAndroid.show(strings.invalidEmailAddress, ToastAndroid.SHORT);
       }
     } else {
-      ToastAndroid.show(strings.pleaseFillAllFields, ToastAndroid.SHORT)
+      ToastAndroid.show(strings.pleaseFillAllFields, ToastAndroid.SHORT);
     }
-  }
+  };
+
   const validateEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return re.test(email)
-  }
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
   const goBack = () => {
-    navigation.goBack()
-  }
+    navigation.goBack();
+  };
+
   const styles = StyleSheet.create({
     container: {
       width: '100%',
@@ -88,7 +104,7 @@ const PasswordResetScreen = ({ navigation }) => {
       marginTop: 200,
       color: colors.signUpHeadingColor,
       fontSize: 36.41,
-      fontFamily: 'Average-Sans-Regular',
+      fontFamily: 'AverageSans-Regular',
     },
     inputGroup: {
       marginVertical: 10,
@@ -98,7 +114,7 @@ const PasswordResetScreen = ({ navigation }) => {
       color: colors.inputLabelColor,
       fontSize: 16,
       marginBottom: 30,
-      fontFamily: 'Altasi-Regular',
+      fontFamily: 'Alatsi-Regular',
     },
     input: {
       width: 280,
@@ -113,7 +129,7 @@ const PasswordResetScreen = ({ navigation }) => {
       borderColor: colors.inputBorderColorEmail,
       color: colors.inputTextColor,
       fontSize: 17,
-      fontFamily: 'Amiri-Quran-Colored',
+      fontFamily: 'AmiriQuran-Regular',
     },
     signupButton: {
       width: 248,
@@ -130,7 +146,7 @@ const PasswordResetScreen = ({ navigation }) => {
       textAlign: 'center',
       textTransform: 'uppercase',
       fontWeight: '300',
-      fontFamily: 'Average-Sans-Regular',
+      fontFamily: 'AverageSans-Regular',
     },
     shadow: {
       shadowColor: colors.buttonType1ShadowColor,
@@ -145,16 +161,17 @@ const PasswordResetScreen = ({ navigation }) => {
       left: 27,
       height: 38,
       width: 38,
-      backgroundColor: "white",
-      justifyContent: "center",
-      alignItems: "center",
-      borderRadius: 10
+      backgroundColor: 'white',
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 10,
     },
     backImage: {
       width: 5,
-      height: 10
-    }
-  })
+      height: 10,
+    },
+  });
+
   return (
     <View style={styles.container}>
       <View style={styles.overlay}>
@@ -181,11 +198,16 @@ const PasswordResetScreen = ({ navigation }) => {
           onChangeText={setEmail}
         />
       </View>
-      <Pressable style={({ pressed }) => [styles.signupButton, pressed && { opacity: 0.6 }, styles.shadow]} onPress={handleReset}>
+      <Pressable
+        style={({ pressed }) => [styles.signupButton, pressed && { opacity: 0.6 }, styles.shadow]}
+        onPress={handleReset}
+      >
         <Text style={styles.signupButtonText}>{strings.resetButtonText}</Text>
       </Pressable>
-    </View>
-  )
-}
 
-export default PasswordResetScreen
+      {loading && <LoadingOverlay />}
+    </View>
+  );
+};
+
+export default PasswordResetScreen;
