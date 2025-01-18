@@ -24,7 +24,7 @@ const LoginScreen = ({ navigation }) => {
   const [passwordVisible, setPasswordVisible] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false);  // Track loading state
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleFacebookLogin = () => {
     ToastAndroid.show(strings.facebookLoginNotSupported, ToastAndroid.SHORT)
@@ -302,7 +302,7 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <LoadingOverlay visible={isLoading} /> {/* Show overlay when loading */}
+      {isLoading && <LoadingOverlay />}
       <View style={styles.overlay}>
         <View style={[styles.circle1, styles.circles]} />
         <View style={[styles.circle2, styles.circles]} />

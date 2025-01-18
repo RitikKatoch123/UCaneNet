@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     GoogleSignin.configure({
       webClientId: '902917005569-841gll6oh160jqbtg0ou0vgj4hck7tj8.apps.googleusercontent.com',
-      offlineAccess: true,
+      offlineAccess: false,
     });
   }, []);
   const saveProxyUrl = async (url) => {

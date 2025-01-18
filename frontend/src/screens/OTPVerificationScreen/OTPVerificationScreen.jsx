@@ -14,7 +14,7 @@ import { AppContext } from '../../contexts/AppContext';
 import Strings from '../../constants/strings';
 import Colors from '../../constants/colors';
 import Constants from '../../constants/constants';
-import LoadingOverlay from "../../components/LoadingOverlay"; // Import the LoadingOverlay component
+import LoadingOverlay from "../../components/LoadingOverlay";
 
 const OTPVerificationScreen = ({ navigation }) => {
   const appContext = useContext(AppContext);

@@ -17,7 +17,7 @@ import Colors from '../../constants/colors';
 import Constants from '../../constants/constants';
 import { AppContext } from '../../contexts/AppContext';
 import backIcon from '../../../assets/icons/back-icon.png';
-import LoadingOverlay from "../../components/LoadingOverlay"; // Import the LoadingOverlay component
+import LoadingOverlay from "../../components/LoadingOverlay";
 
 const PasswordResetScreen = ({ navigation }) => {
   const appContext = useContext(AppContext);

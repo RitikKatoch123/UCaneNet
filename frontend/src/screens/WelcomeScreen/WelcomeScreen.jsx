@@ -16,7 +16,7 @@ import Urls from '../../constants/Urls';
 import LoadingOverlay from '../../components/LoadingOverlay';
 
 const WelcomeScreen = ({ navigation }) => {
-  const [isLoading, setIsLoading] = useState(false); // Add loading state
+  const [isLoading, setIsLoading] = useState(false);
   const appContext = useContext(AppContext);
   const strings = new Strings(appContext.language);
   const colors = new Colors(appContext.theme);
@@ -33,7 +33,7 @@ const WelcomeScreen = ({ navigation }) => {
   };
 
   const handleGoogleLogin = async () => {
-    setIsLoading(true); // Start loading
+    setIsLoading(true);
 
     try {
       await GoogleSignin.hasPlayServices();
@@ -62,7 +62,7 @@ const WelcomeScreen = ({ navigation }) => {
 
       ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
     } finally {
-      setIsLoading(false); // Stop loading after the request completes
+      setIsLoading(false);
     }
   };
 
