@@ -138,8 +138,9 @@ export default function ScanScreen() {
   };
 
   const doneCapture = () => {
-    navigation.navigate(constants.drawerRoutes.RESULT_SCREEN, {
-      imageUri: capturedImage.toString()
+    navigation.navigate(constants.bottomTabsRoutes.DASHBOARD_TAB, {
+      screen: constants.drawerRoutes.RESULT_SCREEN,
+      params: {imageUri: capturedImage.toString()}
     });
   };
 

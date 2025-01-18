@@ -1,5 +1,5 @@
 import { StyleSheet, ScrollView, View, Text, ActivityIndicator, ToastAndroid } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import axios from "axios";
 import PredictionContainer from "./PredictionContainer";
 import MoreDetails from "./MoreDetails";
@@ -7,6 +7,7 @@ import { AuthContext } from "../../../contexts/AuthContext";
 import Urls from "../../../constants/Urls";
 import Strings from "../../../constants/strings";
 import { AppContext } from "../../../contexts/AppContext";
+import { useFocusEffect } from '@react-navigation/core';
 
 const ResultComponent = ({ imageUri }) => {
     const [predictionStatus, setPredictionStatus] = useState(null);
@@ -18,6 +19,9 @@ const ResultComponent = ({ imageUri }) => {
     const urls = new Urls(authContext);
     const appContext = useContext(AppContext);
     const strings = new Strings(appContext.language);
+
+    const isMounted = useRef(true);
+    const pollInterval = useRef(null);
 
     const fetchResultFromImage = () => {
         const formData = new FormData();
@@ -40,28 +44,34 @@ const ResultComponent = ({ imageUri }) => {
                 const { tracking_id } = uploadResponse.data;
                 setPredictionStatus("in_progress");
 
-                const pollInterval = setInterval(() => {
+                pollInterval.current = setInterval(() => {
                     axios.get(`${urls.predictionStatusUrl}/${tracking_id}`)
                         .then((statusResponse) => {
                             const statusData = statusResponse.data;
 
                             if (statusData.status === "completed") {
-                                clearInterval(pollInterval);
-                                setPredictionStatus("completed");
-                                setResult(statusData.result.result);
-                                setGradCam(statusData.result.grad_cam);
-                                setRawDiseaseDetails(statusData.result.extra_details);
-                                setConfidence(statusData.result.confidence);
+                                if (isMounted.current) {
+                                    clearInterval(pollInterval.current);
+                                    setPredictionStatus("completed");
+                                    setResult(statusData.result.result);
+                                    setGradCam(statusData.result.grad_cam);
+                                    setRawDiseaseDetails(statusData.result.extra_details);
+                                    setConfidence(statusData.result.confidence);
+                                }
                             } else if (statusData.status === "not_found") {
-                                clearInterval(pollInterval);
-                                setPredictionStatus("not_found");
-                                ToastAndroid.show(strings.predictionNotFound, ToastAndroid.SHORT);
+                                if (isMounted.current) {
+                                    clearInterval(pollInterval.current);
+                                    setPredictionStatus("not_found");
+                                    ToastAndroid.show(strings.predictionNotFound, ToastAndroid.SHORT);
+                                }
                             }
                         })
                         .catch((error) => {
                             console.error("Error polling prediction status:", error.message);
-                            clearInterval(pollInterval);
-                            ToastAndroid.show(strings.errorFetchingResult, ToastAndroid.SHORT);
+                            if (isMounted.current) {
+                                clearInterval(pollInterval.current);
+                                ToastAndroid.show(strings.errorFetchingResult, ToastAndroid.SHORT);
+                            }
                         });
                 }, 2000);
             })
@@ -72,8 +82,23 @@ const ResultComponent = ({ imageUri }) => {
     };
 
     useEffect(() => {
+        isMounted.current = true;
         fetchResultFromImage();
+
+        return () => {
+            isMounted.current = false;
+            clearInterval(pollInterval.current);
+        };
     }, [imageUri]);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            return () => {
+                clearInterval(pollInterval.current);
+                isMounted.current = false;
+            };
+        }, [])
+    );
 
     return predictionStatus === null || predictionStatus === "in_progress" ? (
         <View style={styles.loadingContainer}>

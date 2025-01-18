@@ -26,6 +26,7 @@ import LeftBurgerIcon from './components/LeftBurgerIcon';
 import CustomDrawerContent from './components/CustomDrawerContent';
 import NavTitle from './components/NavTitle';
 import Strings from '../../constants/strings';
+import ProxyManagerScreen from '../../screens/ProxyManagerScreen/ProxyManagerScreen';
 
 const Drawer = createDrawerNavigator();
 const { drawerRoutes } = new Constants();
@@ -36,7 +37,7 @@ const DashboardRouter = ({ navigation }) => {
   const colors = new Color(appContext.theme);
   const constants = new Constants();
   const { drawerTitles } = new Strings(appContext.language);
-  
+
   const styles = StyleSheet.create({
     dashboardIcon: {
       height: 24,
@@ -150,6 +151,17 @@ const DashboardRouter = ({ navigation }) => {
           headerTitleAlign: 'center',
           headerRight: () => <ProfileButton authContext={authContext} colors={colors} constants={constants} />,
           drawerItemStyle: styles.drawerItemHidden,
+        }}
+      />
+      <Drawer.Screen
+        name={drawerRoutes.PROXY_MANAGER_SCREEN}
+        component={ProxyManagerScreen}
+        options={{
+          title: () => <NavTitle title={drawerTitles.PROXY_MANAGER_SCREEN} colors={colors} />,
+          drawerIcon: () => <Image source={MessageIcon} style={styles.dashboardIcon} />,
+          headerLeft: () => <BackButton navigation={navigation} />,
+          headerTitleAlign: 'center',
+          headerRight: () => <ProfileButton authContext={authContext} colors={colors} constants={constants} />,
         }}
       />
     </Drawer.Navigator>

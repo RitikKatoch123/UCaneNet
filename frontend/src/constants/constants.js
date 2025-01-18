@@ -29,6 +29,7 @@ export default class Constants {
             RESULT_SCREEN: 'ResultScreen',
             NOTIFICATION_SCREEN: "NotificationScreen",
             BOTTOM_TABS_ROUTER: "BottomTabsRouter",
+            PROXY_MANAGER_SCREEN: "ProxyManagerScreen"
         };
 
         this.SPLASH_DELAY = 1000;

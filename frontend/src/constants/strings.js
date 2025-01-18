@@ -4,7 +4,10 @@ export default class Strings {
 
         this.logoName1 = "BH";
         this.logoName2 = "MI";
-
+        this.proxyLabelHeading = "Set server URL";
+        this.proxyLabelDescription = "Enter custom backend URL to connect to";
+        this.proxySavedSuccessfully = "Proxy Saved successfully";
+        this.proxyFailedToSave = "Failed to save proxy";
         if (this.languageCode === 0) { // Hindi
             this.logoSlogan = "किसान मित्र ऐप";
             this.welcomeText = "पर आपका स्वागत है";
@@ -87,7 +90,8 @@ export default class Strings {
                 SCAN_SCREEN: "फसल स्कैन करें",
                 RESULT_SCREEN: 'परिणाम',
                 NOTIFICATION_SCREEN: "सूचनाएँ",
-                BOTTOM_TABS_ROUTER: "नीचे टैब राउटर",
+                BOTTOM_TABS_ROUTER: "टैब राउटर",
+                PROXY_MANAGER_SCREEN: "Proxy घर"
             };
             this.ins1 = "प्रभावित फसल का चयन करें";
             this.ins2 = "फसल की तस्वीर अपलोड करें";
@@ -203,6 +207,7 @@ export default class Strings {
                 RESULT_SCREEN: 'Result',
                 NOTIFICATION_SCREEN: "Notification",
                 BOTTOM_TABS_ROUTER: "Bottom Tabs Router",
+                PROXY_MANAGER_SCREEN: "Proxy Manager"
             };
             this.ins1 = "Select Affected Crop";
             this.ins2 = "Upload Crop's Photo";

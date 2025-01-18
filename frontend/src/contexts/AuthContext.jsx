@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ToastAndroid } from "react-native";
 import Constants from "../constants/constants";
 import axios from "axios";
-import { EXPO_BACKEND_API_URL, EXPO_GCP_WEB_CLIENT_ID, EXPO_YOUTUBE_CHANNEL_ID, EXPO_APP_WEBSITE } from "@env";
+import { EXPO_GCP_WEB_CLIENT_ID, EXPO_YOUTUBE_CHANNEL_ID, EXPO_APP_WEBSITE } from "@env";
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import Strings from "../constants/strings";
 
@@ -21,67 +21,95 @@ export const AuthProvider = ({ children }) => {
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
   const [userPhone, setUserPhone] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const [EXPO_BACKEND_API_URL, setEXPO_BACKEND_API_URL] = useState(null);
   const constants = new Constants();
-  const strings = new Strings(1);  
+  const strings = new Strings(1);
   useEffect(() => {
     GoogleSignin.configure({
       webClientId: EXPO_GCP_WEB_CLIENT_ID,
       offlineAccess: true,
     });
   }, []);
-
-  const loadLocalAuth = () => {
-    AsyncStorage.getItem("authToken")
-      .then(savedAuthToken => {
-        if (!savedAuthToken) {
-          setLoading(false);
-          return;
-        }
-
-        const getProfileUrl = `${EXPO_BACKEND_API_URL}/get_profile/${savedAuthToken}`;
-        axios
-          .get(getProfileUrl)
-          .then(response => {
-            if (response.status === 200) {
-              const data = response.data;
-              setAuthToken(savedAuthToken);
-              setUserProfilePicture(data.avatarUrl);
-              setUserName(data.username);
-              setAppRating(data.rated_app);
-              setAppReview(data.review);
-              setUserEmail(data.email);
-              setIsEmailVerified(data.isEmailVerified);
-              setIsPhoneVerified(data.isPhoneVerified);
-              setUserPhone(data.phone); 
-            } else {
-              ToastAndroid.show(response.data.error || strings.signInAuthError, ToastAndroid.SHORT);
-            }
-          })
-          .catch(error => {
-            ToastAndroid.show(error.message || strings.signInAuthError, ToastAndroid.SHORT);
-          })
-          .finally(() => {
-            setLoading(false);
-          });
-      })
-      .catch(error => {
-        ToastAndroid.show(error.message || strings.signInAuthError, ToastAndroid.SHORT);
-        setLoading(false);
-      });
+  const saveProxyUrl = async (url) => {
+    try {
+      setEXPO_BACKEND_API_URL(url);
+      await AsyncStorage.setItem("proxy_url", url);
+      ToastAndroid.show("Proxy URL updated", ToastAndroid.SHORT);
+    } catch (error) {
+      ToastAndroid.show("Error saving proxy URL", ToastAndroid.SHORT);
+    }
   };
-  useEffect(()=>{
+  const loadLocalAuth = () => {
+    AsyncStorage.getItem("proxy_url")
+      .then(savedProxyUrl => {
+        if (savedProxyUrl) {
+          setEXPO_BACKEND_API_URL(savedProxyUrl);
+          AsyncStorage.getItem("authToken")
+            .then(savedAuthToken => {
+              if (!savedAuthToken) {
+                setLoading(false);
+                return;
+              }
+
+              const getProfileUrl = `${savedProxyUrl}/get_profile/${savedAuthToken}`;
+              axios
+                .get(getProfileUrl)
+                .then(response => {
+                  if (response.status === 200) {
+                    const data = response.data;
+                    setAuthToken(savedAuthToken);
+                    setUserProfilePicture(data.avatarUrl);
+                    setUserName(data.username);
+                    setAppRating(data.rated_app);
+                    setAppReview(data.review);
+                    setUserEmail(data.email);
+                    setIsEmailVerified(data.isEmailVerified);
+                    setIsPhoneVerified(data.isPhoneVerified);
+                    setUserPhone(data.phone);
+                  } else {
+                    ToastAndroid.show(response.data.error || strings.signInAuthError, ToastAndroid.SHORT);
+                  }
+                })
+                .catch(error => {
+                  ToastAndroid.show(error.message || strings.signInAuthError, ToastAndroid.SHORT);
+                })
+                .finally(() => {
+                  setLoading(false);
+                });
+            })
+            .catch(error => {
+              ToastAndroid.show(error.message || strings.signInAuthError, ToastAndroid.SHORT);
+              setLoading(false);
+            });
+        }
+      })
+
+  };
+  useEffect(() => {
     loadLocalAuth();
   }, [])
   useEffect(() => {
-    if(authToken){
+    if (authToken) {
       AsyncStorage.setItem("authToken", authToken);
       loadLocalAuth();
     }
   }, [authToken]);
+  const logout = async () => {
+    setAuthToken(null);
+    setUserProfilePicture(null);
+    setUserName("Guest");
+    setAppRating(0);
+    setAppReview(null);
+    setUserEmail("agrigrow@gmail.com");
+    setIsEmailVerified(false);
+    setIsPhoneVerified(false);
+    setUserPhone(null);
+    await AsyncStorage.removeItem("authToken");
+  };
 
   const contextValues = {
     EXPO_BACKEND_API_URL,
+    saveProxyUrl,
     EXPO_GCP_WEB_CLIENT_ID,
     EXPO_YOUTUBE_CHANNEL_ID,
     EXPO_APP_WEBSITE,
@@ -104,6 +132,7 @@ export const AuthProvider = ({ children }) => {
     setIsEmailVerified,
     isPhoneVerified,
     setIsPhoneVerified,
+    logout
   };
 
   return (
