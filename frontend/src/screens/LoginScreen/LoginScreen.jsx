@@ -65,7 +65,9 @@ const LoginScreen = ({ navigation }) => {
           })
           .catch(error => {
             setIsLoading(false);
-            ToastAndroid.show(error.message, ToastAndroid.SHORT);
+            ToastAndroid.show(`${error.message}: ${urls.passwordSigninUrl}`, ToastAndroid.SHORT);
+            console.log(JSON.stringify(urls));
+            
           })
       } else {
         ToastAndroid.show(strings.invalidEmailAddress, ToastAndroid.SHORT);
