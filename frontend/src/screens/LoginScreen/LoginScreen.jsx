@@ -12,6 +12,7 @@ import { AuthContext } from '../../contexts/AuthContext'
 import axios from 'axios'
 import Urls from '../../constants/Urls'
 import LoadingOverlay from '../../components/LoadingOverlay';
+import backIcon from '../../../assets/icons/back-icon.png'
 
 const LoginScreen = ({ navigation }) => {
   const appContext = useContext(AppContext)
