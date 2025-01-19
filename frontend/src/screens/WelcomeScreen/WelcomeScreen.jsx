@@ -224,7 +224,7 @@ const WelcomeScreen = ({ navigation }) => {
         colors={colors.gradientColors}
         style={styles.overlay}
       />
-      <LoadingOverlay isLoading={isLoading} /> {/* Show loading overlay */}
+      <LoadingOverlay isLoading={isLoading} />
       <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
         <Text style={styles.skipButtonText}>{strings.skipButtonText}</Text>
       </TouchableOpacity>

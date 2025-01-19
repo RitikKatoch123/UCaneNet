@@ -1,17 +1,22 @@
-import { StyleSheet, View, FlatList } from 'react-native';
-import React from 'react';
+import { StyleSheet, View, FlatList, ToastAndroid, ActivityIndicator, Text, RefreshControl } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import NotificationItem from './components/NotificationItem';
 import Strings from '../../constants/strings';
 import Colors from '../../constants/colors';
 import Constants from '../../constants/constants';
 import { AppContext } from '../../contexts/AppContext';
 import { useContext } from 'react';
+import axios from 'axios';
+import Urls from '../../constants/Urls';
+import { AuthContext } from '../../contexts/AuthContext';
 
 const NotificationScreen = () => {
   const appContext = useContext(AppContext);
   const strings = new Strings(appContext.language);
   const colors = new Colors(appContext.theme);
   const constants = new Constants();
+  const authContext = useContext(AuthContext);
+  const urls = new Urls(authContext);
 
   const styles = StyleSheet.create({
     container: {
@@ -56,44 +61,63 @@ const NotificationScreen = () => {
       top: -170,
       left: 240,
     },
+    noReportsText: {
+      fontSize: 16,
+      color: colors.tertiaryColor,
+      textAlign: 'center',
+      marginTop: 30,
+      fontFamily: "RobotoExtra-Light",
+    },
   });
-  const notifications = [
-    {
-      id: '1',
-      image: null,
-      title: 'Detected new disease',
-      description: 'Detailed description about the detected disease.',
-      timeStamp: '10:12',
-    },
-    {
-      id: '2',
-      image: null,
-      title: 'Reminder for checkup',
-      description: 'Your scheduled checkup is due tomorrow.',
-      timeStamp: '12:30',
-    },
-    {
-      id: '3',
-      image: null,
-      title: 'New vaccine available',
-      description: 'A new vaccine is now available at your nearest center.',
-      timeStamp: '09:45',
-    },
-    {
-      id: '4',
-      image: null,
-      title: 'Health tip of the day',
-      description: 'Drink at least 8 glasses of water daily to stay hydrated.',
-      timeStamp: '08:00',
-    },
-  ];
+
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchNotification = async () => {
+    setLoading(true);
+    axios
+      .get(urls.fetchNotificationUrl)
+      .then(response => {
+        setNotifications(response.data);
+      })
+      .catch(error => {
+        ToastAndroid.show(error.message, ToastAndroid.SHORT);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    axios
+      .get(urls.fetchNotificationUrl)
+      .then(response => {
+        setNotifications(response.data);
+      })
+      .catch(error => {
+        ToastAndroid.show(error.message, ToastAndroid.SHORT);
+      })
+      .finally(() => {
+        setRefreshing(false);
+      });
+  };
+
+  useEffect(() => {
+    if (!!authContext.authToken) {
+      fetchNotification();
+    } else {
+      setLoading(false);
+    }
+  }, [authContext.authToken]);
 
   const renderItem = ({ item }) => (
     <NotificationItem
       image={item.image}
       title={item.title}
       description={item.description}
-      timeStamp={item.timeStamp}
+      timeStamp={item.timestamp}
     />
   );
 
@@ -104,15 +128,27 @@ const NotificationScreen = () => {
         <View style={[styles.circle2, styles.circles]} />
         <View style={[styles.circle3, styles.circles]} />
       </View>
-      <FlatList
-        data={notifications}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        contentContainerStyle={styles.list}
-      />
+      {loading ? (
+        <ActivityIndicator size="large" color={colors.primaryColor} />
+      ) : notifications.length === 0 ? (
+        <Text style={styles.noReportsText}>{strings.noNotificationText}</Text>
+      ) : (
+        <FlatList
+          data={notifications}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          contentContainerStyle={styles.list}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              colors={[colors.primaryColor]}
+            />
+          }
+        />
+      )}
     </View>
   );
 };
 
 export default NotificationScreen;
-

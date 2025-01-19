@@ -29,11 +29,13 @@ const DashboardProfile = () => {
         username: {
             fontSize: 20,
             marginTop: 21,
+            fontFamily: 'Alatsi-Regular'
         },
         email: {
             fontSize: 14,
             color: colors.inputLabelColor,
             marginBottom: 21,
+            fontFamily: 'Alatsi-Regular'
         }
     });
     return (

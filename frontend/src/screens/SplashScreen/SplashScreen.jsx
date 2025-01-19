@@ -102,14 +102,6 @@ const SplashScreen = ({ navigation }) => {
     },
   });
 
-  // if (authContext.loading || !isReady) {
-  //   return (
-  //     <View style={styles.main}>
-  //       <ActivityIndicator size="large" color={color.primaryTextColor} />
-  //     </View>
-  //   );
-  // }
-
   return (isReady) && (
     <View style={styles.main}>
       <Image source={SplashIconLogo} style={styles.logoImage} />

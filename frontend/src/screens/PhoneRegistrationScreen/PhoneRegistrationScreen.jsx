@@ -14,7 +14,7 @@ import Colors from '../../constants/colors';
 import Constants from '../../constants/constants';
 import { AppContext } from '../../contexts/AppContext';
 import backIcon from '../../../assets/icons/back-icon.png';
-import LoadingOverlay from "../../components/LoadingOverlay"; // Import the LoadingOverlay component
+import LoadingOverlay from "../../components/LoadingOverlay";
 
 const PhoneRegistrationScreen = ({ navigation }) => {
   const appContext = useContext(AppContext);
@@ -172,6 +172,7 @@ const PhoneRegistrationScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      {loading && <LoadingOverlay />}
       <View style={styles.overlay}>
         <View style={[styles.circle1, styles.circles]} />
         <View style={[styles.circle2, styles.circles]} />
@@ -200,7 +201,6 @@ const PhoneRegistrationScreen = ({ navigation }) => {
       >
         <Text style={styles.signupButtonText}>{strings.phoneRegButtonText}</Text>
       </Pressable>
-      {loading && <LoadingOverlay />}
     </View>
   );
 };

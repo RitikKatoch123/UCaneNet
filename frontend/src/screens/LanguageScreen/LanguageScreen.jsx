@@ -159,6 +159,7 @@ const LanguageScreen = ({ navigation }) => {
 
   return (
     <ImageBackground source={languageBackground} style={styles.container}>
+      {isLoading && <LoadingOverlay />}
       <View style={styles.overlay}>
         <View style={[styles.circle1, styles.circles]} />
         <View style={[styles.circle2, styles.circles]} />
@@ -195,7 +196,6 @@ const LanguageScreen = ({ navigation }) => {
       <Text style={styles.slogan}>
         {strings.langscreenFooterText}
       </Text>
-      {isLoading && <LoadingOverlay />}
     </ImageBackground>
   )
 }

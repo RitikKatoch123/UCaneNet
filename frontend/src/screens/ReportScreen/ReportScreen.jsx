@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, FlatList, Pressable, ToastAndroid, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, Pressable, ToastAndroid, ActivityIndicator, RefreshControl } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
 import Strings from '../../constants/strings';
 import Colors from '../../constants/colors';
@@ -17,27 +17,35 @@ const ReportScreen = ({ navigation }) => {
   const colors = new Colors(appContext.theme);
   const constants = new Constants();
   const [solutions, setSolutions] = useState([]);
-  const [loading, setLoading] = useState(true);  // Add loading state
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const urls = new Urls(authContext);
 
+  const fetchReports = async (isRefresh = false) => {
+    if (!isRefresh) setLoading(true);
+    axios
+      .get(urls.getReportsUrl)
+      .then(response => {
+        setSolutions(response.data);
+      })
+      .catch(error => {
+        ToastAndroid.show(error.message, ToastAndroid.SHORT);
+      })
+      .finally(() => {
+        if (isRefresh) setRefreshing(false);
+        else setLoading(false);
+      });
+  };
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchReports(true);
+  };
+
   useEffect(() => {
-    const fetchReports = async () => {
-      axios
-        .get(urls.getReportsUrl)
-        .then(response => {
-          setSolutions(response.data);
-        })
-        .catch(error => {
-          ToastAndroid.show(error.message, ToastAndroid.SHORT);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    };
     if (!!authContext.authToken) {
       fetchReports();
-    }
-    else{
+    } else {
       setLoading(false);
     }
   }, [authContext.authToken]);
@@ -179,6 +187,13 @@ const ReportScreen = ({ navigation }) => {
             renderItem={({ item }) => <Solution item={item} colors={colors} />}
             contentContainerStyle={styles.solutionContainer}
             showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                colors={[colors.primaryColor]}
+              />
+            }
           />
         )}
       </View>

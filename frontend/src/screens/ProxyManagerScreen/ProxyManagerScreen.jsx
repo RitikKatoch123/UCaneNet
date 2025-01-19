@@ -77,7 +77,7 @@ const ProxyManagerScreen = ({ navigation }) => {
         },
         heading: {},
         headingText: {
-            marginTop: 200,
+            marginTop: 60,
             color: colors.signUpHeadingColor,
             fontSize: 36.41,
             fontFamily: 'AverageSans-Regular',

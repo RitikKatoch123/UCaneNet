@@ -174,6 +174,7 @@ const PasswordResetScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      {loading && <LoadingOverlay />}
       <View style={styles.overlay}>
         <View style={[styles.circle1, styles.circles]} />
         <View style={[styles.circle2, styles.circles]} />
@@ -205,7 +206,6 @@ const PasswordResetScreen = ({ navigation }) => {
         <Text style={styles.signupButtonText}>{strings.resetButtonText}</Text>
       </Pressable>
 
-      {loading && <LoadingOverlay />}
     </View>
   );
 };

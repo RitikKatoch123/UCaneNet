@@ -9,5 +9,6 @@ export default class Urls {
         this.signUpUrl = `${authContext.EXPO_BACKEND_API_URL}/create_profile`;
         this.uploadUrl = `${authContext.EXPO_BACKEND_API_URL}/upload/${authContext.authToken}`;
         this.predictionStatusUrl = `${authContext.EXPO_BACKEND_API_URL}/prediction_status`;
+        this.fetchNotificationUrl = `${authContext.EXPO_BACKEND_API_URL}/get_notifications/${authContext.authToken}`;
     }
 }

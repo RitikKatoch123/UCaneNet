@@ -31,7 +31,7 @@ const SignUpScreen = ({ navigation }) => {
   }
 
   const handleGoogleLogin = async () => {
-    setLoading(true)  // Show loading overlay when starting the async task
+    setLoading(true)
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
@@ -58,14 +58,14 @@ const SignUpScreen = ({ navigation }) => {
         ToastAndroid.show(strings.signInFailedError, ToastAndroid.SHORT);
       }
     } finally {
-      setLoading(false)  // Hide loading overlay after the task is done
+      setLoading(false)
     }
   };
 
   const handleSignUp = () => {
     if (fullName && email && password) {
       if (validateEmail(email)) {
-        setLoading(true)  // Show loading overlay when starting the async task
+        setLoading(true)
         axios.post(urls.signUpUrl, {
           username: fullName,
           email: email,
@@ -84,7 +84,7 @@ const SignUpScreen = ({ navigation }) => {
             ToastAndroid.show(strings.signUpFailed, ToastAndroid.SHORT);
           })
           .finally(() => {
-            setLoading(false)  // Hide loading overlay after the task is done
+            setLoading(false)
           });
       } else {
         ToastAndroid.show(strings.invalidEmailAddress, ToastAndroid.SHORT);

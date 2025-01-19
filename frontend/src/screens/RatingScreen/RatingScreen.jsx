@@ -164,9 +164,10 @@ const RatingScreen = () => {
       marginBottom: 20,
     },
   });
-
+  
   return (
     <View style={styles.container}>
+      {loading && <LoadingOverlay />}
       <View style={styles.centralCard}>
         <View style={styles.background} />
         <View style={styles.appProfile}>
@@ -207,7 +208,6 @@ const RatingScreen = () => {
           <Text style={styles.signupButtonText}>{strings.submitText}</Text>
         </Pressable>
       </View>
-      {loading && <LoadingOverlay />}
     </View>
   );
 };
