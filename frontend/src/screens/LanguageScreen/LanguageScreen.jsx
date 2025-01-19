@@ -1,4 +1,4 @@
-import { Image, ImageBackground, TouchableOpacity, StyleSheet, Text, View, Pressable, ToastAndroid } from 'react-native'
+import { Image, ImageBackground, TouchableOpacity, StyleSheet, Text, View, Pressable, ToastAndroid, Linking } from 'react-native'
 import React, { useState, useContext } from 'react'
 import Strings from '../../constants/strings'
 import Colors from '../../constants/colors'
@@ -30,7 +30,9 @@ const LanguageScreen = ({ navigation }) => {
   }
 
   const handleDiscover = () => {
-    // Handle discover action here
+    Linking.openURL(authContext.EXPO_APP_WEBSITE).catch((err) => {
+      console.error("Failed to open URL: ", err);
+    });
   }
 
   const styles = StyleSheet.create({
