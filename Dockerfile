@@ -13,8 +13,8 @@ RUN apt-get update \
 
 RUN pip install kaggle gunicorn
 
-ENV KAGGLE_USERNAME="notyoursurya"
-ENV KAGGLE_KEY="ef6123cf1b7d184ff4425cdd469cccb1"
+ENV KAGGLE_USERNAME=""
+ENV KAGGLE_KEY=""
 
 RUN mkdir -p /root/.kaggle \
     && echo "{\"username\": \"$KAGGLE_USERNAME\", \"key\": \"$KAGGLE_KEY\"}" > /root/.kaggle/kaggle.json
