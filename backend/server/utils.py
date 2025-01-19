@@ -11,7 +11,10 @@ import io
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 IS_MODEL_TRAINING = False
-MODEL_NAME = "model.h5"
+
+with open('backend/server/config.json', 'r') as f:
+    config_data = json.load(f)
+    MODEL_NAME = config_data['model_name']
 
 trainer = CaneNet()
 model = trainer.load_model()
