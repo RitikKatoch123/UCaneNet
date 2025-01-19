@@ -5,15 +5,14 @@ from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 from .utils import allowed_file, run_predict, UPLOAD_FOLDER, incomplete_predictions, prediction_data
 from .firebase_handler import FirebaseService
-from uuid import uuid4
 import json
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-with open('backend/server/config.json', 'r') as f:
+with open('server/config.json', 'r') as f:
     config_data = json.load(f)
-    creds_path = f"backend/server/{config_data['firebase_creds_file']}"
+    creds_path = f"server/{config_data['firebase_creds_file']}"
     collection_name = config_data['collection_name']
 
 firebaseService = FirebaseService(creds_path, collection_name)
@@ -34,7 +33,7 @@ def upload_file(user_id):
 
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save(os.path.join("backend/", app.config['UPLOAD_FOLDER'], filename))
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         tracking_id = str(uuid.uuid4())
         langid = request.args.get('langid', default=None, type=int)
         try:

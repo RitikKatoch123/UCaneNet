@@ -23,7 +23,7 @@ matplotlib.use('Agg')
 
 class CaneNet:
     def __init__(self, model_type=0):
-        self.DATASET_PATH = "backend/dataset/unzipped"
+        self.DATASET_PATH = "dataset/unzipped"
         self.IMAGE_SIZE = (128, 128)
         self.INPUT_SHAPE = (128, 128, 3)
         self.SEED = 123
@@ -164,8 +164,8 @@ class CaneNet:
 
     def save_model(self, model_name="model.h5"):
         if self.model:
-            self.model.save(f"backend/models/{model_name}")
-            with open(f"backend/models/{model_name}.classes.json", "w") as f:
+            self.model.save(f"models/{model_name}")
+            with open(f"models/{model_name}.classes.json", "w") as f:
                 json.dump({"classes": self.class_names}, f)
             return True
         else:
@@ -174,13 +174,13 @@ class CaneNet:
 
     def load_model(self, model_name="model.h5"):
         try:
-            self.model = load_model(f"backend/models/{model_name}")
+            self.model = load_model(f"models/{model_name}")
             # print(self.model.summary())
 
-            with open(f"backend/models/{model_name}.classes.json", "r") as f:
+            with open(f"models/{model_name}.classes.json", "r") as f:
                 model_metadata = json.load(f)
                 self.class_names = model_metadata.get("classes")
-            print(f"Model and metadata loaded successfully from backend/models/{model_name}")
+            print(f"Model and metadata loaded successfully from models/{model_name}")
             return True
         except Exception as e:
             print(f"Error loading model: {e}")

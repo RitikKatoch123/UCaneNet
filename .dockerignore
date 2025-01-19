@@ -1,0 +1,6 @@
+frontend/
+README.md
+.expo/
+.git/
+.gitignore
+.vscode

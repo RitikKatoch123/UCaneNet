@@ -12,7 +12,7 @@ UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 IS_MODEL_TRAINING = False
 
-with open('backend/server/config.json', 'r') as f:
+with open('server/config.json', 'r') as f:
     config_data = json.load(f)
     MODEL_NAME = config_data['model_name']
 
@@ -82,20 +82,23 @@ def more_details(disease_name, langid):
 def run_predict(tracking_id, filename, firebaseService, user_id, langid):
     global model
     if model:
-        incomplete_predictions.add(tracking_id)
-        img_path = os.path.join("backend/", UPLOAD_FOLDER, filename)
-        compressed_image = compress_image(img_path)
-        b64_img = base64.b64encode(compressed_image).decode('utf-8')
-        result, confidence = trainer.predict(img_path)
-        grad_cam = trainer.generate_grad_cam(img_path)
-        extra_details = more_details(result, langid)
-        if user_id != 'null': save_report(json.loads(extra_details), firebaseService, result, b64_img, user_id)
-        prediction_data[tracking_id] = {
-            "result": result,
-            "confidence": str(confidence),
-            "grad_cam": grad_cam,
-            "extra_details": extra_details
-        }
+        try:
+            incomplete_predictions.add(tracking_id)
+            img_path = os.path.join(UPLOAD_FOLDER, filename)
+            compressed_image = compress_image(img_path)
+            b64_img = base64.b64encode(compressed_image).decode('utf-8')
+            result, confidence = trainer.predict(img_path)
+            grad_cam = trainer.generate_grad_cam(img_path)
+            extra_details = more_details(result, langid)
+            if user_id != 'null': save_report(json.loads(extra_details), firebaseService, result, b64_img, user_id)
+            prediction_data[tracking_id] = {
+                "result": result,
+                "confidence": str(confidence),
+                "grad_cam": grad_cam,
+                "extra_details": extra_details
+            }
+        except Exception as e:
+            pass
         incomplete_predictions.remove(tracking_id)
     else:
         run_train()

@@ -1,0 +1,10 @@
+werkzeug
+flask
+firebase_admin
+pillow
+opencv-python
+numpy
+matplotlib
+opencv-contrib-python
+tensorflow
+gunicorn

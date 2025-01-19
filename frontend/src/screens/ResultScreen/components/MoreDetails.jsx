@@ -1,8 +1,9 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
-const MoreDetails = ({ rawDiseaseDetails }) => {
+const MoreDetails = ({ rawDiseaseDetails, strings }) => {
     const [diseaseDetails, setDiseaseDetails] = useState(null);
+    const featuresArray = strings.featuresArray;
     const parseDiseaseData = (data) => {
         const parsedData = {
             causes: data?.causes || "N/A",
@@ -23,19 +24,19 @@ const MoreDetails = ({ rawDiseaseDetails }) => {
         <View style={styles.container}>
             {diseaseDetails && (
                 <>
-                    <Text style={styles.sectionTitle}>How to Recognize</Text>
+                    <Text style={styles.sectionTitle}>{featuresArray[0]}</Text>
                     <Text style={styles.text}>{diseaseDetails.recognition}</Text>
 
-                    <Text style={styles.sectionTitle}>Causes</Text>
+                    <Text style={styles.sectionTitle}>{featuresArray[1]}</Text>
                     <Text style={styles.text}>{diseaseDetails.causes}</Text>
 
-                    <Text style={styles.sectionTitle}>Cures</Text>
+                    <Text style={styles.sectionTitle}>{featuresArray[2]}</Text>
                     <Text style={styles.text}>{diseaseDetails.cures}</Text>
 
-                    <Text style={styles.sectionTitle}>Scientific Name</Text>
+                    <Text style={styles.sectionTitle}>{featuresArray[3]}</Text>
                     <Text style={styles.text}>{diseaseDetails.scientificName}</Text>
 
-                    <Text style={styles.sectionTitle}>Other Details</Text>
+                    <Text style={styles.sectionTitle}>{featuresArray[4]}</Text>
                     <Text style={styles.text}>{diseaseDetails.otherDetails}</Text>
                 </>
             )}

@@ -115,7 +115,7 @@ const ResultComponent = ({ imageUri }) => {
                 gradCam={gradCam}
                 confidence={confidence}
             />
-            <MoreDetails imageUri={imageUri} rawDiseaseDetails={rawDiseaseDetails} />
+            <MoreDetails rawDiseaseDetails={rawDiseaseDetails} strings={strings} />
         </ScrollView>
     );
 };
