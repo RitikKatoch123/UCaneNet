@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
   const strings = new Strings(1);
   useEffect(() => {
     GoogleSignin.configure({
-      webClientId: '902917005569-841gll6oh160jqbtg0ou0vgj4hck7tj8.apps.googleusercontent.com',
+      webClientId: EXPO_GCP_WEB_CLIENT_ID || '902917005569-841gll6oh160jqbtg0ou0vgj4hck7tj8.apps.googleusercontent.com',
       offlineAccess: true,
     });
   }, []);

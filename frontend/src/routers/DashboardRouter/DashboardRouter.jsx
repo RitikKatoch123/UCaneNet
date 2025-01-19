@@ -77,7 +77,7 @@ const DashboardRouter = ({ navigation }) => {
           headerTitle: () => <AppLogo constants={constants} colors={colors} />,
           drawerItemStyle: styles.drawerItemHidden,
           headerTitleAlign: 'center',
-          headerRight: () => <ProfileButton authContext={authContext} colors={colors} constants={constants} />,
+          headerRight: () => <ProfileButton authContext={authContext} colors={colors} />,
         }}
       />
       <Drawer.Screen
@@ -149,7 +149,7 @@ const DashboardRouter = ({ navigation }) => {
           drawerIcon: () => <Image source={MessageIcon} style={styles.dashboardIcon} />,
           headerLeft: () => <BackButton navigation={navigation} />,
           headerTitleAlign: 'center',
-          headerRight: () => <ProfileButton authContext={authContext} colors={colors} constants={constants} />,
+          headerRight: () => <ProfileButton authContext={authContext} colors={colors} />,
           drawerItemStyle: styles.drawerItemHidden,
         }}
       />
@@ -161,7 +161,7 @@ const DashboardRouter = ({ navigation }) => {
           drawerIcon: () => <Image source={MessageIcon} style={styles.dashboardIcon} />,
           headerLeft: () => <BackButton navigation={navigation} />,
           headerTitleAlign: 'center',
-          headerRight: () => <ProfileButton authContext={authContext} colors={colors} constants={constants} />,
+          headerRight: () => <ProfileButton authContext={authContext} colors={colors} />,
         }}
       />
     </Drawer.Navigator>

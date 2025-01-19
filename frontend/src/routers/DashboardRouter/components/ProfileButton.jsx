@@ -2,10 +2,12 @@ import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 import placeHolderImage from "../../../../assets/profile-picture-avatar.png"
+import Constants from '../../../constants/constants'
 
-const ProfileButton = ({ authContext, colors, constants }) => {
+const ProfileButton = ({ authContext, colors }) => {
     const navigation = useNavigation();
-    const goToProfile = () => {
+    const constants = new Constants()
+    const goToProfile = () => {        
         navigation.navigate(constants.bottomTabsRoutes.PROFILE_TAB)
     }
     const styles = StyleSheet.create({
