@@ -113,7 +113,8 @@ const BottomTabsRouter = ({ navigation }) => {
                         </View>
                     ),
                     tabBarLabel: '',
-                    headerTitle: '',
+                    headerTitleAlign: 'center',
+                    headerTitle: () => <Text style={styles.notificationTabTitle}>Scan a plant</Text>,
                     headerLeft: () => <BackButton navigation={navigation} />,
                 })}
             />

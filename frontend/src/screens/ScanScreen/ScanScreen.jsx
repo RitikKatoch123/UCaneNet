@@ -1,13 +1,15 @@
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import React, { useState, useRef, useEffect } from 'react';
-import { Button, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button, Image, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import cameraImage from "../../../assets/icons/camera-image.png";
+import galleryImage from "../../../assets/icons/gallery-icon.png";
 import Strings from '../../constants/strings';
 import Colors from '../../constants/colors';
 import Constants from '../../constants/constants';
 import { AppContext } from '../../contexts/AppContext';
 import { useContext } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
 
 export default function ScanScreen() {
   const appContext = useContext(AppContext);
@@ -67,6 +69,14 @@ export default function ScanScreen() {
       padding: 20,
       borderRadius: 100,
     },
+    captureContainer2: {
+      marginTop: 30,
+      backgroundColor: colors.primaryColor,
+      padding: 15,
+      borderRadius: 100,
+      marginBottom: 10,
+    },
+      
     shadow: {
       shadowColor: 'black',
       shadowOffset: { width: 0, height: 1 },
@@ -82,6 +92,12 @@ export default function ScanScreen() {
       flexDirection: 'row',
       marginTop: 20,
     },
+    buttonContainer2: {
+      flexDirection: 'row',
+      marginLeft: 120,
+      width: 200,
+      justifyContent: 'space-between'
+    },
     actionButton: {
       backgroundColor: colors.primaryColor,
       paddingHorizontal: 15,
@@ -94,6 +110,11 @@ export default function ScanScreen() {
       color: colors.primaryTextColor,
       fontWeight: 'bold',
     },
+    pickButton: {
+      height: 30,
+      width: 30,
+      tintColor: 'white'
+    }
   });
 
   const [permission, requestPermission] = useCameraPermissions();
@@ -131,7 +152,28 @@ export default function ScanScreen() {
       setHasCaptured(true);
     }
   };
-
+  const pickImage = async () => {
+    try {
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!permissionResult.granted) {
+          ToastAndroid.show(strings.galleryPermissionRequired, ToastAndroid.SHORT);
+          return;
+        }
+  
+        const result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          quality: 1,
+          allowsEditing: true,
+        });
+  
+        if (!result.canceled) {
+          setCapturedImage(result.assets[0].uri);
+          setHasCaptured(true);
+        }
+    } catch (error) {
+      console.error(error);
+    }
+  }
   const retryCapture = () => {
     setCapturedImage(null);
     setHasCaptured(false);
@@ -154,9 +196,14 @@ export default function ScanScreen() {
       {!hasCaptured ? (
         <>
           <CameraView ref={cameraRef} style={[styles.camera, styles.shadow]} facing={'back'} />
-           <TouchableOpacity style={[styles.captureContainer, styles.shadow]} onPress={captureImage}>
-            <Image source={cameraImage} style={styles.captureButton} />
-          </TouchableOpacity>
+          <View style={[styles.buttonContainer2]}>
+            <TouchableOpacity style={[styles.captureContainer, styles.shadow]} onPress={captureImage}>
+              <Image source={cameraImage} style={styles.captureButton} />
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.captureContainer2, styles.shadow]} onPress={pickImage}>
+              <Image source={galleryImage} style={styles.pickButton} />
+            </TouchableOpacity>
+          </View>
         </>
       ) : (
         <>
@@ -165,7 +212,7 @@ export default function ScanScreen() {
             <TouchableOpacity style={[styles.actionButton, styles.shadow]} onPress={retryCapture}>
               <Text style={styles.actionButtonText}>Retry</Text>
             </TouchableOpacity>
-              <TouchableOpacity style={[styles.actionButton, styles.shadow]} onPress={doneCapture}>
+            <TouchableOpacity style={[styles.actionButton, styles.shadow]} onPress={doneCapture}>
               <Text style={styles.actionButtonText}>Done</Text>
             </TouchableOpacity>
           </View>

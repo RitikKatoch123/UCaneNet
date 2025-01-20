@@ -72,7 +72,7 @@ const DashboardRouter = ({ navigation }) => {
         name={drawerRoutes.HOME_SCREEN}
         component={HomeScreen}
         options={{
-          title: () => <NavTitle title={ drawerTitles.HOME_SCREEN } colors={colors} />,
+          title: drawerTitles.HOME_SCREEN,
           drawerIcon: () => <Image source={HomeIcon} style={styles.dashboardIcon} />,
           headerTitle: () => <AppLogo constants={constants} colors={colors} />,
           drawerItemStyle: styles.drawerItemHidden,
@@ -84,7 +84,7 @@ const DashboardRouter = ({ navigation }) => {
         name={drawerRoutes.SCAN_SCREEN}
         component={ScanScreen}
         options={{
-          title: () => <NavTitle title={drawerTitles.SCAN_SCREEN} colors={colors} />,
+          title: drawerTitles.SCAN_SCREEN,
           drawerIcon: () => <Image source={HomeIcon} style={styles.dashboardIcon} />,
           drawerItemStyle: styles.drawerItemHidden,
           headerLeft: () => <BackButton navigation={navigation} />,
@@ -95,7 +95,7 @@ const DashboardRouter = ({ navigation }) => {
         name={drawerRoutes.REPORT_SCREEN}
         component={ReportScreen}
         options={{
-          title: () => <NavTitle title={drawerTitles.REPORT_SCREEN} colors={colors} />,
+          title: drawerTitles.REPORT_SCREEN,
           headerLeft: () => <BackButton navigation={navigation} />,
           headerTitleAlign: 'center',
           headerTitle: '',
@@ -106,7 +106,7 @@ const DashboardRouter = ({ navigation }) => {
         name={drawerRoutes.PROFILE_SCREEN}
         component={ProfileScreen}
         options={{
-          title: () => <NavTitle title={drawerTitles.PROFILE_SCREEN} colors={colors} />,
+          title: drawerTitles.PROFILE_SCREEN,
           drawerIcon: () => <Image source={UserIcon} style={styles.dashboardIcon} />,
           headerTitle: '',
           headerLeft: () => <BackButton navigation={navigation} />,
@@ -116,7 +116,7 @@ const DashboardRouter = ({ navigation }) => {
         name={drawerRoutes.RATING_SCREEN}
         component={RatingScreen}
         options={{
-          title: () => <NavTitle title={drawerTitles.RATING_SCREEN} colors={colors} />,
+          title:drawerTitles.RATING_SCREEN,
           drawerIcon: () => <Image source={StarIcon} style={styles.dashboardIcon} />,
           headerTitle: '',
           headerLeft: () => <BackButton navigation={navigation} />,
@@ -126,7 +126,7 @@ const DashboardRouter = ({ navigation }) => {
         name={drawerRoutes.CONTACT_SCREEN}
         component={ContactScreen}
         options={{
-          title: () => <NavTitle title={drawerTitles.CONTACT_SCREEN} colors={colors} />,
+          title:drawerTitles.CONTACT_SCREEN,
           drawerIcon: () => <Image source={MessageIcon} style={styles.dashboardIcon} />,
         }}
       />
@@ -134,7 +134,7 @@ const DashboardRouter = ({ navigation }) => {
         name={drawerRoutes.RESULT_SCREEN}
         component={ResultScreen}
         options={{
-          title: () => <NavTitle title={drawerTitles.RESULT_SCREEN} colors={colors} />,
+          title:drawerTitles.RESULT_SCREEN,
           drawerIcon: () => <Image source={MessageIcon} style={styles.dashboardIcon} />,
           headerLeft: () => <BackButton navigation={navigation} />,
           headerTitleAlign: 'center',
@@ -145,7 +145,7 @@ const DashboardRouter = ({ navigation }) => {
         name={drawerRoutes.NOTIFICATION_SCREEN}
         component={NoticationScreen}
         options={{
-          title: () => <NavTitle title={drawerTitles.NOTIFICATION_SCREEN} colors={colors} />,
+          title:drawerTitles.NOTIFICATION_SCREEN,
           drawerIcon: () => <Image source={MessageIcon} style={styles.dashboardIcon} />,
           headerLeft: () => <BackButton navigation={navigation} />,
           headerTitleAlign: 'center',
@@ -157,7 +157,7 @@ const DashboardRouter = ({ navigation }) => {
         name={drawerRoutes.PROXY_MANAGER_SCREEN}
         component={ProxyManagerScreen}
         options={{
-          title: () => <NavTitle title={drawerTitles.PROXY_MANAGER_SCREEN} colors={colors} />,
+          title:drawerTitles.PROXY_MANAGER_SCREEN,
           drawerIcon: () => <Image source={MessageIcon} style={styles.dashboardIcon} />,
           headerLeft: () => <BackButton navigation={navigation} />,
           headerTitleAlign: 'center',
