@@ -3,13 +3,25 @@
 
 ## Frontend section (Mobile application)
 ### App link
-[Download from expo](https://expo.dev/accounts/bhoomi-ml/projects/bhoomi/builds/efe10904-159a-4dea-96dc-3139e412f4e2)
-
-### Build APK from source
-You can just commit to this repository and `eas` will build it automatically on `expo.dev`. Note that build would be triggered only when `package.json` or `app.json` would be changed.
+[Download from expo](https://expo.dev/accounts/bhoomi-ml/projects/bhoomi/builds/5708106b-cbb1-4966-87c5-9317a398874f)
 
 ### Build locally?
 expo local building is only available for linux systems so not possible
+but you build it through `eas-cli` on `expo server`
+
+**Note: Please add `.env` file before running these commands**
+
+#### For building
+```
+eas build --profile preview --platform android --non-interactive
+```
+#### For updating
+```
+eas update --channel preview --auto --non-interactive
+```
+
+### Build APK from source
+You can just commit to this repository and `eas` will build it automatically on `expo.dev`. Note that build would be triggered only when `package.json` or `app.json` would be changed.
 
 #### Updates
 Updates like `JS code, assets` can be also pushed directly on this repo. All the preinstalled client will be updated automatically.
@@ -41,6 +53,8 @@ https://www.kaggle.com/datasets/nirmalsankalana/sugarcane-leaf-disease-dataset
 ### Prerequisite
 - Python 3
 - GPU enabled system
+- node
+- expo-cli
 - docker (optional)
 
 ### Installation
