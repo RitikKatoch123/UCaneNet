@@ -24,7 +24,7 @@ const ReportScreen = ({ navigation }) => {
   const fetchReports = async (isRefresh = false) => {
     if (!isRefresh) setLoading(true);
     axios
-      .get(urls.getReportsUrl, { timeout: 10000 })
+      .get(urls.getReportsUrl, { timeout: 20000 })
       .then(response => {
         setSolutions(response.data);
       })
