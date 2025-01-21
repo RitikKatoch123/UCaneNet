@@ -24,9 +24,9 @@ export const AuthProvider = ({ children }) => {
   const [EXPO_BACKEND_API_URL, setEXPO_BACKEND_API_URL] = useState(null);
   const constants = new Constants();
   const strings = new Strings(1);
-  EXPO_GCP_WEB_CLIENT_ID = EXPO_GCP_WEB_CLIENT_ID || "902917005569-841gll6oh160jqbtg0ou0vgj4hck7tj8.apps.googleusercontent.com";
-  EXPO_YOUTUBE_CHANNEL_ID = EXPO_YOUTUBE_CHANNEL_ID || "UCwAC7GLiu6JkZZF3vUgXtuw";
-  EXPO_APP_WEBSITE = EXPO_APP_WEBSITE || "https://www.bhoomi.in";
+  let EXPO_GCP_WEB_CLIENT_ID = EXPO_GCP_WEB_CLIENT_ID ?? "902917005569-841gll6oh160jqbtg0ou0vgj4hck7tj8.apps.googleusercontent.com";
+  let EXPO_YOUTUBE_CHANNEL_ID = EXPO_YOUTUBE_CHANNEL_ID ?? "UCwAC7GLiu6JkZZF3vUgXtuw";
+  let EXPO_APP_WEBSITE = EXPO_APP_WEBSITE ?? "https://www.bhoomi.in";
   useEffect(() => {
     GoogleSignin.configure({
       webClientId: EXPO_GCP_WEB_CLIENT_ID,
