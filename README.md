@@ -30,6 +30,8 @@ Updates like `JS code, assets` can be also pushed directly on this repo. All the
 ### Dataset used 
 https://www.kaggle.com/datasets/nirmalsankalana/sugarcane-leaf-disease-dataset
 
+**Note: Download it and store it in `backend/dataset/unzipped` folder (for training purpose)**
+
 ### Model implemented
 - Model 0: MobileNetV2 with extra Convolutional Layer
   - Base Model: MobileNetV2 pre-trained on ImageNet is used as a feature extractor, with the first layers frozen for transfer learning.
@@ -51,7 +53,7 @@ https://www.kaggle.com/datasets/nirmalsankalana/sugarcane-leaf-disease-dataset
 
 ## How to run backend
 ### Prerequisite
-- Python 3
+- Python 3.8.10
 - GPU enabled system
 - node
 - expo-cli
