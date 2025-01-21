@@ -10,50 +10,49 @@ export default class Strings {
         this.proxyFailedToSave = "Failed to save proxy";
         this.backendUrlIsNotSet = "Backend URL is not set";
         this.noNotificationText = "No notifications found";
+        this.logoSlogan = "Farmer Friendly App";
+        this.welcomeText = "Welcome to";
+        this.pageSlogan = "Make Easy Farming with it.";
+        this.skipButtonText = "Skip";
+        this.signInWithLabel = "sign in with";
+        this.facebookButtonText = "Facebook";
+        this.googleButtonText = "Google";
+        this.emailButtonText = "Start with Email";
+        this.phoneButtonText = "Start with Phone";
+        this.signInOnAlreadyText = "Already have an account? Sign In";
+
+        this.signUpHeading = "Sign Up";
+        this.fullNameLabel = "Full Name";
+        this.emailLabel = "Email";
+        this.passwordLabel = "Password";
+        this.signUpButtonText = "Sign Up";
+        this.alreadyHaveAccountText = "Already have an account? Sign In";
+        this.signUpWithLabel = "Sign up with";
+
+        this.loginHeading = "Login";
+        this.loginButtonText = "Login";
+        this.forgotPasswordText = "Forgot Password?";
+        this.dontHaveAccountText = "Don't have an account? Sign Up";
+        this.loginWithLabel = "Sign in with";
+
+        this.resetHeading = "Reset Password";
+        this.resetDescription = "Please enter your email address to request a password reset";
+        this.resetButtonText = "Reset Password";
+
+        this.phoneRegHeading = "Registration";
+        this.phoneRegDescription = "Enter your phone number to verify your account";
+        this.phoneRegButtonText = "Send";
+
+        this.otpHeading = "Verification Code";
+        this.otpDescription = "Please type the verification code sent to";
+        this.otpButtonText = "I haven't received a code! Please resend";
+
+        this.langscreenSubtitle = "Choose Language";
+        this.langscreenLang1 = "हिन्दी";
+        this.langscreenLang2 = "English";
+        this.langscreenDiscoverText = "Discover More";
+        this.langscreenFooterText = "We're popular in agriculture market globally";
         if (this.languageCode === 0) { // Hindi
-            this.logoSlogan = "किसान मित्र ऐप";
-            this.welcomeText = "पर आपका स्वागत है";
-            this.pageSlogan = "इसे आसान खेती बनाएं।";
-            this.skipButtonText = "छोड़ें";
-            this.signInWithLabel = "साइन इन करें";
-            this.facebookButtonText = "फेसबुक";
-            this.googleButtonText = "गूगल";
-            this.emailButtonText = "ईमेल से शुरू करें";
-            this.phoneButtonText = "फ़ोन से शुरू करें";
-            this.signInOnAlreadyText = "पहले से ही खाता है? साइन इन करें";
-
-            this.signUpHeading = "साइन अप करें";
-            this.fullNameLabel = "पूरा नाम";
-            this.emailLabel = "ईमेल";
-            this.passwordLabel = "पासवर्ड";
-            this.signUpButtonText = "साइन अप करें";
-            this.alreadyHaveAccountText = "पहले से ही खाता है? साइन इन करें";
-            this.signUpWithLabel = "साइन अप करें";
-
-            this.loginHeading = "लॉगिन";
-            this.loginButtonText = "लॉगिन";
-            this.forgotPasswordText = "पासवर्ड भूल गए?";
-            this.dontHaveAccountText = "खाता नहीं है? साइन अप करें";
-            this.loginWithLabel = "साइन इन करें";
-
-            this.resetHeading = "पासवर्ड रीसेट करें";
-            this.resetDescription = "कृपया पासवर्ड रीसेट करने के लिए अपना ईमेल पता दर्ज करें";
-            this.resetButtonText = "पासवर्ड रीसेट करें";
-
-            this.phoneRegHeading = "रजिस्ट्रेशन";
-            this.phoneRegDescription = "अपना फ़ोन नंबर दर्ज करें ताकि हम आपके खाते की पुष्टि कर सकें";
-            this.phoneRegButtonText = "भेजें";
-
-            this.otpHeading = "सत्यापन कोड";
-            this.otpDescription = "कृपया भेजे गए सत्यापन कोड को दर्ज करें";
-            this.otpButtonText = "मैंने कोड नहीं प्राप्त किया! कृपया फिर से भेजें";
-
-            this.langscreenSubtitle = "भाषा चुनें";
-            this.langscreenLang1 = "हिन्दी";
-            this.langscreenLang2 = "English";
-            this.langscreenDiscoverText = "अधिक जानें";
-            this.langscreenFooterText = "हम कृषि बाजार में वैश्विक रूप से लोकप्रिय हैं";
-
             this.scanScreenPermissionRequest = "हमें कैमरा दिखाने के लिए आपकी अनुमति की आवश्यकता है";
             this.scanScreenPermissionButton = "अनुमति दें";
 
@@ -127,49 +126,6 @@ export default class Strings {
             this.playServiceError = "प्ले सेवाएं उपलब्ध नहीं हैं";
             this.signInFailedError = "गूगल साइन-इन विफल हुआ";
         } else { // English
-            this.logoSlogan = "Farmer Friendly App";
-            this.welcomeText = "Welcome to";
-            this.pageSlogan = "Make Easy Farming with it.";
-            this.skipButtonText = "Skip";
-            this.signInWithLabel = "sign in with";
-            this.facebookButtonText = "Facebook";
-            this.googleButtonText = "Google";
-            this.emailButtonText = "Start with Email";
-            this.phoneButtonText = "Start with Phone";
-            this.signInOnAlreadyText = "Already have an account? Sign In";
-
-            this.signUpHeading = "Sign Up";
-            this.fullNameLabel = "Full Name";
-            this.emailLabel = "Email";
-            this.passwordLabel = "Password";
-            this.signUpButtonText = "Sign Up";
-            this.alreadyHaveAccountText = "Already have an account? Sign In";
-            this.signUpWithLabel = "Sign up with";
-
-            this.loginHeading = "Login";
-            this.loginButtonText = "Login";
-            this.forgotPasswordText = "Forgot Password?";
-            this.dontHaveAccountText = "Don't have an account? Sign Up";
-            this.loginWithLabel = "Sign in with";
-
-            this.resetHeading = "Reset Password";
-            this.resetDescription = "Please enter your email address to request a password reset";
-            this.resetButtonText = "Reset Password";
-
-            this.phoneRegHeading = "Registration";
-            this.phoneRegDescription = "Enter your phone number to verify your account";
-            this.phoneRegButtonText = "Send";
-
-            this.otpHeading = "Verification Code";
-            this.otpDescription = "Please type the verification code sent to";
-            this.otpButtonText = "I haven't received a code! Please resend";
-
-            this.langscreenSubtitle = "Choose Language";
-            this.langscreenLang1 = "हिन्दी";
-            this.langscreenLang2 = "English";
-            this.langscreenDiscoverText = "Discover More";
-            this.langscreenFooterText = "We're popular in agriculture market globally";
-
             this.scanScreenPermissionRequest = "We need your permission to show the camera";
             this.scanScreenPermissionButton = "Grant Permission";
 

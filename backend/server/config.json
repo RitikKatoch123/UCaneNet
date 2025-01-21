@@ -1,5 +1,6 @@
 {
     "firebase_creds_file": "bhoomi-ml-8bfea-firebase-adminsdk-6rby5-b00d7a9098.json",
     "collection_name": "users",
-    "model_name": "model.h5"
+    "model_name": "model.h5",
+    "gemini_api_key": "AIzaSyDBLpRAAfEFwUXRYV9jfqTMWXRJIqO9Tqg"
 }

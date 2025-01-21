@@ -15,6 +15,7 @@ IS_MODEL_TRAINING = False
 with open('server/config.json', 'r') as f:
     config_data = json.load(f)
     MODEL_NAME = config_data['model_name']
+    gemini_api_key = config_data['gemini_api_key']
 
 trainer = CaneNet()
 model = trainer.load_model()
@@ -58,7 +59,6 @@ def more_details(disease_name, langid):
     5) Scientific name of the plant affected by the disease (affectedPlantName),
     and 6) Any additional relevant details (otherDetails)'''
 
-    gemini_api_key = "AIzaSyDBLpRAAfEFwUXRYV9jfqTMWXRJIqO9Tqg"
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_api_key}"
     data = {
         "contents": [
