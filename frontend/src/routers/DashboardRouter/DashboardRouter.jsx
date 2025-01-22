@@ -127,6 +127,8 @@ const DashboardRouter = ({ navigation }) => {
         component={ContactScreen}
         options={{
           title:drawerTitles.CONTACT_SCREEN,
+          headerLeft: () => <BackButton navigation={navigation} />,
+          headerTitleAlign: 'center',
           drawerIcon: () => <Image source={MessageIcon} style={styles.dashboardIcon} />,
         }}
       />
