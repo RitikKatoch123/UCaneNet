@@ -16,9 +16,10 @@ with open('server/config.json', 'r') as f:
     config_data = json.load(f)
     MODEL_NAME = config_data['model_name']
     gemini_api_key = config_data['gemini_api_key']
+    model_type = config_data['model_type']
 
-trainer = CaneNet()
-model = trainer.load_model()
+trainer = CaneNet(model_type)
+model = trainer.load_model(MODEL_NAME)
 prediction_data = {}
 incomplete_predictions = set()
 train_lock = threading.Lock()
