@@ -3,7 +3,7 @@ from tensorflow.keras.preprocessing import image_dataset_from_directory
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.data import AUTOTUNE
 from tensorflow.keras import Sequential
-from tensorflow.keras.layers import Rescaling, GlobalAveragePooling2D, Flatten, Dense, Dropout, ReLU, Conv2D
+from tensorflow.keras.layers import Rescaling, GlobalAveragePooling2D, Flatten, Dense, Dropout, ReLU, Conv2D, MaxPooling2D, BatchNormalization, Add, Input
 from tensorflow.keras.losses import SparseCategoricalCrossentropy
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.regularizers import l2
@@ -76,7 +76,7 @@ class CaneNet:
         self.validation_ds = validation_split.cache().prefetch(buffer_size=AUTOTUNE)
         self.test_ds = test_split.cache().prefetch(buffer_size=AUTOTUNE)
 
-    def _ucanenet_basic_block(inputs, filters, kernel_size=3, stride=1, conv_shortcut=True):
+    def _ucanenet_basic_block(self, inputs, filters, kernel_size=3, stride=1, conv_shortcut=True):
         x = Conv2D(filters, kernel_size, strides=stride, padding='same', use_bias=False)(inputs)
         x = BatchNormalization()(x)
         x = ReLU()(x)
