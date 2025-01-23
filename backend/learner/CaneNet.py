@@ -75,6 +75,24 @@ class CaneNet:
         self.train_ds = train_ds.cache().shuffle(self.BUFFER_SIZE).prefetch(buffer_size=AUTOTUNE)
         self.validation_ds = validation_split.cache().prefetch(buffer_size=AUTOTUNE)
         self.test_ds = test_split.cache().prefetch(buffer_size=AUTOTUNE)
+
+    def _ucanenet_basic_block(inputs, filters, kernel_size=3, stride=1, conv_shortcut=True):
+        x = Conv2D(filters, kernel_size, strides=stride, padding='same', use_bias=False)(inputs)
+        x = BatchNormalization()(x)
+        x = ReLU()(x)
+
+        x = Conv2D(filters, kernel_size, padding='same', use_bias=False)(x)
+        x = BatchNormalization()(x)
+
+        if conv_shortcut:
+            shortcut = Conv2D(filters, 1, strides=stride, use_bias=False)(inputs)
+            shortcut = BatchNormalization()(shortcut)
+        else:
+            shortcut = inputs
+
+        x = Add()([x, shortcut])
+        x = ReLU()(x)
+        return x
  
     def get_class_names(self):
         return self.class_names
@@ -101,6 +119,7 @@ class CaneNet:
                 Dropout(0.3),
                 Dense(len(self.class_names), activation='softmax')
             ])
+
         if self.model_type == 1:        
             model = Sequential([
                 Rescaling(1./255, input_shape=self.INPUT_SHAPE),
@@ -120,6 +139,34 @@ class CaneNet:
                 Dense(len(self.class_names), activation='softmax')
             ])
  
+        if self.model_type == 2:
+            inputs = Input(shape=self.INPUT_SHAPE)
+            x = Rescaling(1./255)(inputs)
+            x = Conv2D(64, 7, strides=2, padding='same', use_bias=False)(x)
+            x = BatchNormalization()(x)
+            x = ReLU()(x)
+            x = MaxPooling2D(3, strides=2, padding='same')(x)
+
+            x = self._ucanenet_basic_block(x, 64, conv_shortcut=False)
+            x = self._ucanenet_basic_block(x, 64)
+            x = self._ucanenet_basic_block(x, 128, stride=2)
+            x = self._ucanenet_basic_block(x, 128)
+            x = self._ucanenet_basic_block(x, 256, stride=2)
+            x = self._ucanenet_basic_block(x, 256)
+            x = self._ucanenet_basic_block(x, 512, stride=2)
+            x = self._ucanenet_basic_block(x, 512)
+
+            x = GlobalAveragePooling2D()(x)
+            x = Flatten()(x)
+            x = BatchNormalization()(x)
+            x = Dropout(0.5)(x)
+            x = Dense(512, activation=ReLU())(x)
+            x = BatchNormalization()(x)
+            x = Dropout(0.5)(x)
+            outputs = Dense(len(self.class_names), activation='softmax')(x)
+
+            model = tf.keras.Model(inputs, outputs)
+
         model.compile(
             optimizer=Adam(learning_rate=self.LEARNING_RATE),
             loss=SparseCategoricalCrossentropy(from_logits=False),
