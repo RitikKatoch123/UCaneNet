@@ -70,6 +70,7 @@ const ResultComponent = ({ imageUri }) => {
                             console.error("Error polling prediction status:", error.message);
                             if (isMounted.current) {
                                 clearInterval(pollInterval.current);
+                                setPredictionStatus("not_found");
                                 ToastAndroid.show(strings.errorFetchingResult, ToastAndroid.SHORT);
                             }
                         });
