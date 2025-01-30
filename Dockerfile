@@ -4,14 +4,15 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     libgl1-mesa-glx \
     libglib2.0-0 \
+    python3.8 \
     python3-pip \
-    python3 \
+    python3.8-distutils \
     unzip \
     wget \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install kaggle gunicorn
+RUN pip install kaggle
 
 ENV KAGGLE_USERNAME=""
 ENV KAGGLE_KEY=""
@@ -23,7 +24,6 @@ RUN ln -s /usr/local/bin/kaggle /usr/bin/kaggle \
     && ln -s /usr/local/bin/gunicorn /usr/bin/gunicorn
 
 RUN which kaggle
-RUN which gunicorn
 
 WORKDIR /backend
 COPY backend/ ./ 
