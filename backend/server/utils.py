@@ -7,22 +7,38 @@ import base64
 import json
 from PIL import Image
 import io
-
-UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-IS_MODEL_TRAINING = False
+import time
 
 with open('server/config.json', 'r') as f:
     config_data = json.load(f)
-    MODEL_NAME = config_data['model_name']
+    model_name = config_data['model_name']
     gemini_api_key = config_data['gemini_api_key']
     model_type = config_data['model_type']
+    dataset_path = config_data['dataset_path']
+    epochs = config_data['epochs']
+    learning_rate = config_data['learning_rate']
+    fine_tuning_points = config_data['fine_tuning_points']
+    batch_size = config_data['batch_size']
+    image_size = config_data['image_size']
+    input_shape = config_data['input_shape']
+    seed = config_data['seed']
+    validation_split = config_data['validation_split']
+    test_split = config_data['test_split']
+    model_path = config_data['model_path']
+    buffer_size = config_data['buffer_size']
+    upload_folder = config_data['upload_folder']
+    allowed_extensions = config_data['allowed_extensions']
 
-trainer = CaneNet(model_type)
-model = trainer.load_model(MODEL_NAME)
+UPLOAD_FOLDER = upload_folder
+ALLOWED_EXTENSIONS = allowed_extensions
+IS_MODEL_TRAINING = False
+
+trainer = CaneNet(model_name=model_name, dataset_path=dataset_path, epochs=epochs, learning_rate=learning_rate, fine_tuning_points=fine_tuning_points, batch_size=batch_size, input_size=image_size, input_shape=input_shape, seed=seed, validation_split=validation_split, model_path=model_path, buffer_size=buffer_size, model_type=model_type)
+model = trainer.load_model()
 prediction_data = {}
 incomplete_predictions = set()
 train_lock = threading.Lock()
+
 def compress_image(img_path, quality=1):
     with Image.open(img_path) as img:
         img_byte_array = io.BytesIO()
@@ -31,6 +47,7 @@ def compress_image(img_path, quality=1):
         return img_byte_array.read()
 
 def save_report(data, firebaseService, name, image, user_id):
+    if not data: return False
     parsed_data = {
         "name": name,
         "imageUrl": image,
@@ -77,6 +94,8 @@ def more_details(disease_name, langid):
     }
     response = requests.post(url, json=data)
     response = response.json()
+    if response.get("error"):
+        return str({})
     response = response["candidates"][0]["content"]["parts"][0]["text"]
     return response
 

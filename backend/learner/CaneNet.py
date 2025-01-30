@@ -1,36 +1,43 @@
-from tensorflow.keras.models import load_model
+from tensorflow.keras.models import load_model, Model
 from tensorflow.keras.preprocessing import image_dataset_from_directory
-from tensorflow.keras.applications import MobileNetV2
 from tensorflow.data import AUTOTUNE
 from tensorflow.keras import Sequential
-from tensorflow.keras.layers import Rescaling, GlobalAveragePooling2D, Flatten, Dense, Dropout, ReLU, Conv2D, MaxPooling2D, BatchNormalization, Add, Input
+from tensorflow.keras.layers import RandomFlip, RandomRotation, RandomZoom, RandomContrast
 from tensorflow.keras.losses import SparseCategoricalCrossentropy
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.regularizers import l2
 from tensorflow.keras.preprocessing import image
 from tensorflow.nn import softmax
 from tensorflow import argmax as tf_argmax
+from tensorflow import GradientTape, cast, float32, reduce_mean, get_logger
 import matplotlib.pyplot as plt
 import cv2
 import numpy as np
 import json
 import tensorflow as tf
-import io
+from io import BytesIO
 import base64
 import matplotlib
+import logging
+from .archs import UCN1, UCN2, UCN3
+
+get_logger().setLevel(logging.ERROR)
+
 matplotlib.use('Agg')
 
 class CaneNet:
-    def __init__(self, model_type=0):
-        self.DATASET_PATH = "dataset/unzipped"
-        self.IMAGE_SIZE = (224, 224)
-        self.INPUT_SHAPE = (224, 224, 3)
-        self.SEED = 123
-        self.BATCH_SIZE = 32
-        self.BUFFER_SIZE = 250
-        self.FINE_TUNE_POINT = 125
-        self.LEARNING_RATE = 0.001
-        self.EPOCHS = 50
+    def __init__(self, dataset_path="dataset/unzipped", model_name="model.h5", epochs=10, learning_rate=0.001, model_type=0, input_size=(224, 224), input_shape=(224, 224, 3), seed=42, batch_size=32, buffer_size=1000, fine_tuning_points=100, validation_split=0.2, model_path="models"):
+        self.DATASET_PATH = dataset_path
+        self.IMAGE_SIZE = tuple(input_size)
+        self.INPUT_SHAPE = tuple(input_shape)
+        self.SEED = seed
+        self.BATCH_SIZE = batch_size
+        self.BUFFER_SIZE = buffer_size
+        self.FINE_TUNE_POINT = fine_tuning_points
+        self.LEARNING_RATE = learning_rate
+        self.EPOCHS = epochs
+        self.VALIDATION_SPLIT = validation_split
+        self.MODEL_PATH = model_path
+        self.MODEL_NAME = model_name
         self.class_names = None
         self.model = None
         self.history = None
@@ -40,11 +47,11 @@ class CaneNet:
         self.model_type = model_type
  
     def _load_dataset(self):
-        train_augmentation = tf.keras.Sequential([
-            tf.keras.layers.RandomFlip('horizontal'),
-            tf.keras.layers.RandomRotation(0.2),
-            tf.keras.layers.RandomZoom(0.2),
-            tf.keras.layers.RandomContrast(0.2)
+        train_augmentation = Sequential([
+            RandomFlip('horizontal'),
+            RandomRotation(0.2),
+            RandomZoom(0.2),
+            RandomContrast(0.2)
         ])
  
         train_ds = image_dataset_from_directory(
@@ -54,7 +61,7 @@ class CaneNet:
             image_size=self.IMAGE_SIZE,
             shuffle=True,
             seed=self.SEED,
-            validation_split=0.2,
+            validation_split=self.VALIDATION_SPLIT,
             subset="training"
         ).map(lambda x, y: (train_augmentation(x), y))
  
@@ -64,7 +71,7 @@ class CaneNet:
             batch_size=self.BATCH_SIZE,
             image_size=self.IMAGE_SIZE,
             seed=self.SEED,
-            validation_split=0.2,
+            validation_split=self.VALIDATION_SPLIT,
             subset="validation"
         )
         self.class_names = validation_ds.class_names
@@ -76,96 +83,19 @@ class CaneNet:
         self.validation_ds = validation_split.cache().prefetch(buffer_size=AUTOTUNE)
         self.test_ds = test_split.cache().prefetch(buffer_size=AUTOTUNE)
 
-    def _ucanenet_basic_block(self, inputs, filters, kernel_size=3, stride=1, conv_shortcut=True):
-        x = Conv2D(filters, kernel_size, strides=stride, padding='same', use_bias=False)(inputs)
-        x = BatchNormalization()(x)
-        x = ReLU()(x)
 
-        x = Conv2D(filters, kernel_size, padding='same', use_bias=False)(x)
-        x = BatchNormalization()(x)
-
-        if conv_shortcut:
-            shortcut = Conv2D(filters, 1, strides=stride, use_bias=False)(inputs)
-            shortcut = BatchNormalization()(shortcut)
-        else:
-            shortcut = inputs
-
-        x = Add()([x, shortcut])
-        x = ReLU()(x)
-        return x
- 
     def get_class_names(self):
         return self.class_names
  
     def prepare_model(self):
         if self.model_type == 0:
-            base_model = MobileNetV2(
-                input_shape=self.INPUT_SHAPE,
-                include_top=False,
-                weights='imagenet'
-            )
-            base_model.trainable = True
- 
-            for layer in base_model.layers[:self.FINE_TUNE_POINT]:
-                layer.trainable = False
- 
-            model = Sequential([
-                Rescaling(1./255, input_shape=self.INPUT_SHAPE),
-                base_model,
-                Conv2D(256, (3, 3), activation='relu', padding='same', kernel_regularizer=l2(0.01)),
-                GlobalAveragePooling2D(),
-                Flatten(),
-                Dense(64, activation=ReLU(), kernel_regularizer=l2(0.01)),
-                Dropout(0.3),
-                Dense(len(self.class_names), activation='softmax')
-            ])
+            model = UCN1.model(self)
 
-        if self.model_type == 1:        
-            model = Sequential([
-                Rescaling(1./255, input_shape=self.INPUT_SHAPE),
-                Conv2D(32, (3, 3), activation='relu', padding='same'),
-                MaxPooling2D((2, 2)),
-                Conv2D(64, (3, 3), activation='relu', padding='same'),
-                MaxPooling2D((2, 2)),
-                Conv2D(128, (3, 3), activation='relu', padding='same'),
-                MaxPooling2D((2, 2)),
-                Conv2D(256, (3, 3), activation='relu', padding='same'),
-                GlobalAveragePooling2D(),
-                Flatten(),
-                Dense(128, activation='relu'),
-                Dropout(0.3),
-                Dense(64, activation='relu'),
-                Dropout(0.3),
-                Dense(len(self.class_names), activation='softmax')
-            ])
- 
+        if self.model_type == 1:   
+            model = UCN2.model(self)
+
         if self.model_type == 2:
-            inputs = Input(shape=self.INPUT_SHAPE)
-            x = Rescaling(1./255)(inputs)
-            x = Conv2D(64, 7, strides=2, padding='same', use_bias=False)(x)
-            x = BatchNormalization()(x)
-            x = ReLU()(x)
-            x = MaxPooling2D(3, strides=2, padding='same')(x)
-
-            x = self._ucanenet_basic_block(x, 64, conv_shortcut=False)
-            x = self._ucanenet_basic_block(x, 64)
-            x = self._ucanenet_basic_block(x, 128, stride=2)
-            x = self._ucanenet_basic_block(x, 128)
-            x = self._ucanenet_basic_block(x, 256, stride=2)
-            x = self._ucanenet_basic_block(x, 256)
-            x = self._ucanenet_basic_block(x, 512, stride=2)
-            x = self._ucanenet_basic_block(x, 512)
-
-            x = GlobalAveragePooling2D()(x)
-            x = Flatten()(x)
-            x = BatchNormalization()(x)
-            x = Dropout(0.5)(x)
-            x = Dense(512, activation=ReLU())(x)
-            x = BatchNormalization()(x)
-            x = Dropout(0.5)(x)
-            outputs = Dense(len(self.class_names), activation='softmax')(x)
-
-            model = tf.keras.Model(inputs, outputs)
+            model = UCN3.model(self)
 
         model.compile(
             optimizer=Adam(learning_rate=self.LEARNING_RATE),
@@ -177,11 +107,7 @@ class CaneNet:
  
     def train(self):
         if self.model:
-            self.history = self.model.fit(
-                self.train_ds,
-                validation_data=self.validation_ds,
-                epochs=self.EPOCHS,
-            )
+            self.history = self.model.fit(self.train_ds, validation_data=self.validation_ds, epochs=self.EPOCHS,)
         else:
             print("Model not loaded")
  
@@ -202,7 +128,7 @@ class CaneNet:
         plt.ylabel('Accuracy')
         plt.xlabel('Epoch')
         plt.show()
-        buf = io.BytesIO()
+        buf = BytesIO()
         plt.savefig(buf, format='png')
         buf.seek(0)
         return base64.b64encode(buf.read()).decode('utf-8')
@@ -211,23 +137,23 @@ class CaneNet:
         result = self.model.evaluate(self.test_ds, return_dict=True)
         return result
  
-    def save_model(self, model_name="model.h5"):
+    def save_model(self):
         if self.model:
-            self.model.save(f"models/{model_name}")
-            with open(f"models/{model_name}.classes.json", "w") as f:
+            self.model.save(f"{self.MODEL_PATH}/{self.MODEL_NAME}")
+            with open(f"{self.MODEL_PATH}/{self.MODEL_NAME}.classes.json", "w") as f:
                 json.dump({"classes": self.class_names}, f)
             return True
         else:
             print("Model not loaded")
             return False
  
-    def load_model(self, model_name="model.h5"):
+    def load_model(self):
         try:
-            self.model = load_model(f"models/{model_name}")
-            with open(f"models/{model_name}.classes.json", "r") as f:
+            self.model = load_model(f"{self.MODEL_PATH}/{self.MODEL_NAME}")
+            with open(f"{self.MODEL_PATH}/{self.MODEL_NAME}.classes.json", "r") as f:
                 model_metadata = json.load(f)
                 self.class_names = model_metadata.get("classes")
-            print(f"Model and metadata loaded successfully from models/{model_name}")
+            print(f"Model and metadata loaded successfully from models/{self.MODEL_NAME}")
             return True
         except Exception as e:
             print(f"Error loading model: {e}")
@@ -259,19 +185,19 @@ class CaneNet:
             last_layer_name = "conv2d"
             last_conv_layer = self.model.get_layer(last_layer_name)
             layer_input = self.model.input
-            grad_model = tf.keras.models.Model(
+            grad_model = Model(
                 inputs=layer_input,
                 outputs=[last_conv_layer.output, self.model.output]
             )
  
-            with tf.GradientTape() as tape:
-                inputs = tf.cast(img_array, tf.float32)
+            with GradientTape() as tape:
+                inputs = cast(img_array, float32)
                 conv_outputs, predictions = grad_model(inputs)
-                predicted_class = tf.argmax(predictions[0])
+                predicted_class = tf_argmax(predictions[0])
                 loss = predictions[:, predicted_class]
  
             grads = tape.gradient(loss, conv_outputs)
-            pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
+            pooled_grads = reduce_mean(grads, axis=(0, 1, 2))
             conv_outputs = conv_outputs[0].numpy()
  
             for i in range(conv_outputs.shape[-1]):
@@ -290,7 +216,7 @@ class CaneNet:
  
             plt.imshow(cv2.cvtColor(superimposed_img, cv2.COLOR_BGR2RGB))
             plt.axis('off')
-            buf = io.BytesIO()
+            buf = BytesIO()
             plt.savefig(buf, format='png')
             buf.seek(0)
             return base64.b64encode(buf.read()).decode('utf-8')

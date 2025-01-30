@@ -3,5 +3,30 @@
     "collection_name": "users",
     "model_name": "model.h5",
     "gemini_api_key": "AIzaSyDBLpRAAfEFwUXRYV9jfqTMWXRJIqO9Tqg",
-    "model_type": 2
+    "model_type": 2,
+    "dataset_path": "dataset/unzipped",
+    "epochs": 50,
+    "learning_rate": 0.001,
+    "fine_tuning_points": 125,
+    "batch_size": 32,
+    "image_size": [
+        224,
+        224
+    ],
+    "input_shape": [
+        224,
+        224,
+        3
+    ],
+    "seed": 123,
+    "validation_split": 0.2,
+    "test_split": 0.1,
+    "model_path": "models",
+    "buffer_size": 250,
+    "upload_folder": "uploads",
+    "allowed_extensions": [
+        "jpg",
+        "jpeg",
+        "png"
+    ]
 }

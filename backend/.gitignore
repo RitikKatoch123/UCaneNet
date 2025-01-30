@@ -5,3 +5,4 @@ server/__pycache__
 uploads/*.png
 uploads/*.jpg
 uploads/*.jpeg
+learner/archs/__pycache__
